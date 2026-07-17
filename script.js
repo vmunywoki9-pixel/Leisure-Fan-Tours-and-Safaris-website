@@ -107,21 +107,28 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // ==========================================
-// Contact Form
+// Contact Form (EmailJS)
 // ==========================================
 
-const form = document.querySelector("form");
+const form = document.getElementById("contact-form");
 
-form.addEventListener("submit", function(e){
-
+form.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const name = form.querySelector('input[type="text"]').value;
-
-    alert("Thank you " + name + "! Your inquiry has been received. We will contact you shortly.");
-
-    form.reset();
-
+    emailjs.sendForm(
+        "service_vx4uq0r",
+        "template_7okg2fc",
+        this
+    )
+    .then(function(response) {
+        console.log("SUCCESS!", response);
+        alert("Inquiry sent successfully!");
+        form.reset();
+    })
+    .catch(function(error) {
+        console.error("FAILED...", error);
+        alert("Error: " + JSON.stringify(error));
+    });
 });
 
 // ==========================================
