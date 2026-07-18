@@ -376,17 +376,23 @@ Book on WhatsApp
 
 </div>
 
-<form>
+<form action="https://formsubmit.co/leisurefansafaris@gmail.com" method="POST">
 
-<input type="text" placeholder="Full Name" required>
+    <input type="hidden" name="_captcha" value="false">
 
-<input type="email" placeholder="Email Address" required>
+    <input type="hidden" name="_subject" value="New Safari Inquiry">
 
-<input type="tel" placeholder="Phone Number">
+    <input type="hidden" name="_next" value="https://vmunywoki9.github.io/Leisure-Fan-Tours-and-Safaris-Website/thankyou.html">
 
-<textarea rows="6" placeholder="Tell us about your dream safari..." required></textarea>
+    <input type="text" name="name" placeholder="Full Name" required>
 
-<button type="submit">Send Inquiry</button>
+    <input type="email" name="email" placeholder="Email Address" required>
+
+    <input type="tel" name="phone" placeholder="Phone Number">
+
+    <textarea name="message" placeholder="Tell us about your dream safari..." required></textarea>
+
+    <button type="submit">Send Inquiry</button>
 
 </form>
 
@@ -431,6 +437,12 @@ target="_blank">
 <i class="fas fa-arrow-up"></i>
 
 </button>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+(function () {
+    emailjs.init("pjk-3OOXLLPStmIkt");
+})();
+</script>
 
 <script src="script.js"></script>
 
