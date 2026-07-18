@@ -25,32 +25,22 @@ document.querySelectorAll(".nav-links a").forEach(link => {
 const counters = document.querySelectorAll(".counter");
 
 counters.forEach(counter => {
-
     counter.innerText = "0";
 
     const updateCounter = () => {
-
         const target = +counter.getAttribute("data-target");
         const count = +counter.innerText;
-
         const increment = Math.ceil(target / 100);
 
         if (count < target) {
-
             counter.innerText = count + increment;
-
             setTimeout(updateCounter, 20);
-
         } else {
-
             counter.innerText = target + "+";
-
         }
-
     };
 
     updateCounter();
-
 });
 
 // ==========================================
@@ -60,29 +50,14 @@ counters.forEach(counter => {
 const topBtn = document.getElementById("topBtn");
 
 window.addEventListener("scroll", () => {
-
-    if (window.scrollY > 400) {
-
-        topBtn.style.display = "block";
-
-    } else {
-
-        topBtn.style.display = "none";
-
-    }
-
+    topBtn.style.display = window.scrollY > 400 ? "block" : "none";
 });
 
 topBtn.addEventListener("click", () => {
-
     window.scrollTo({
-
         top: 0,
-
         behavior: "smooth"
-
     });
-
 });
 
 // ==========================================
@@ -90,44 +65,12 @@ topBtn.addEventListener("click", () => {
 // ==========================================
 
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-
     anchor.addEventListener("click", function (e) {
-
         e.preventDefault();
 
-        document.querySelector(this.getAttribute("href"))
-            .scrollIntoView({
-
-                behavior: "smooth"
-
-            });
-
-    });
-
-});
-
-// ==========================================
-// Contact Form (EmailJS)
-// ==========================================
-
-const form = document.getElementById("contact-form");
-
-form.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    emailjs.sendForm(
-        "service_vx4uq0r",
-        "template_7okg2fc",
-        this
-    )
-    .then(function(response) {
-        console.log("SUCCESS!", response);
-        alert("Inquiry sent successfully!");
-        form.reset();
-    })
-    .catch(function(error) {
-        console.error("FAILED...", error);
-        alert("Error: " + JSON.stringify(error));
+        document.querySelector(this.getAttribute("href")).scrollIntoView({
+            behavior: "smooth"
+        });
     });
 });
 
@@ -143,31 +86,20 @@ window.addEventListener("scroll", () => {
     let current = "";
 
     sections.forEach(section => {
-
         const sectionTop = section.offsetTop - 120;
 
-        const sectionHeight = section.clientHeight;
-
-        if (pageYOffset >= sectionTop) {
-
+        if (window.scrollY >= sectionTop) {
             current = section.getAttribute("id");
-
         }
-
     });
 
     navItems.forEach(link => {
-
         link.classList.remove("active");
 
         if (link.getAttribute("href") === "#" + current) {
-
             link.classList.add("active");
-
         }
-
     });
-
 });
 
 // ==========================================
@@ -178,24 +110,18 @@ const revealElements = document.querySelectorAll(
     ".card, .review, .price-card, .stat, .gallery-container img"
 );
 
-const reveal = () => {
-
+function reveal() {
     const windowHeight = window.innerHeight;
 
     revealElements.forEach(el => {
-
         const revealTop = el.getBoundingClientRect().top;
 
         if (revealTop < windowHeight - 100) {
-
             el.style.opacity = "1";
             el.style.transform = "translateY(0)";
-
         }
-
     });
-
-};
+}
 
 reveal();
 
@@ -207,18 +133,16 @@ window.addEventListener("scroll", reveal);
 
 const hero = document.querySelector(".hero");
 
-window.addEventListener("scroll", () => {
-
-    hero.style.opacity = 1 - window.scrollY / 900;
-
-});
+if (hero) {
+    window.addEventListener("scroll", () => {
+        hero.style.opacity = 1 - window.scrollY / 900;
+    });
+}
 
 // ==========================================
 // Welcome Message
 // ==========================================
 
 window.addEventListener("load", () => {
-
     console.log("Welcome to Leisure Fan Tours and Safaris");
-
 });
