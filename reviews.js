@@ -7,37 +7,12 @@ import {
   where,
   getDocs,
   serverTimestamp
-<form id="reviewForm">
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<input type="text" id="reviewName" placeholder="Your Name" required>
+// Review Form
+const reviewForm = document.getElementById("reviewForm");
 
-<input type="text" id="reviewCountry" placeholder="Country" required>
-
-<select id="reviewRating" required>
-
-<option value="">Choose Rating</option>
-
-<option value="5">★★★★★ Excellent</option>
-
-<option value="4">★★★★☆ Very Good</option>
-
-<option value="3">★★★☆☆ Good</option>
-
-<option value="2">★★☆☆☆ Fair</option>
-
-<option value="1">★☆☆☆☆ Poor</option>
-
-</select>
-
-<textarea
-id="reviewMessage"
-placeholder="Write your review..."
-required></textarea>
-
-<button type="submit">Submit Review</button>
-
-</form>
-<div id="firebaseReviews"></div>
+if (reviewForm) {
 
   reviewForm.addEventListener("submit", async (e) => {
 
@@ -45,31 +20,29 @@ required></textarea>
 
     const name = document.getElementById("reviewName").value;
     const country = document.getElementById("reviewCountry").value;
-    const rating = parseInt(document.getElementById("reviewRating").value);
+    const rating = Number(document.getElementById("reviewRating").value);
     const review = document.getElementById("reviewMessage").value;
 
     try {
 
       await addDoc(collection(db, "reviews"), {
-
-        name,
-        country,
-        rating,
-        review,
+        name: name,
+        country: country,
+        rating: rating,
+        review: review,
         approved: false,
         createdAt: serverTimestamp()
-
       });
 
-      alert("✅ Thank you! Your review has been received and is awaiting approval.");
+      alert("✅ Thank you! Your review has been submitted and is awaiting approval.");
 
       reviewForm.reset();
 
     } catch (error) {
 
-      alert("Failed to submit review.");
-
       console.error(error);
+
+      alert("❌ Failed to submit review.");
 
     }
 
@@ -77,8 +50,7 @@ required></textarea>
 
 }
 
-// Display Approved Reviews
-
+// Load Approved Reviews
 async function loadReviews() {
 
   const container = document.getElementById("firebaseReviews");
@@ -94,24 +66,23 @@ async function loadReviews() {
 
   const snapshot = await getDocs(q);
 
+  if (snapshot.empty) {
+    container.innerHTML = "<p>No reviews yet.</p>";
+    return;
+  }
+
   snapshot.forEach((doc) => {
 
     const data = doc.data();
 
     container.innerHTML += `
-
       <div class="review">
-
-          <h3>${"⭐".repeat(data.rating)}</h3>
-
-          <p>"${data.review}"</p>
-
-          <h4>${data.name}</h4>
-
-          <small>${data.country}</small>
-
+        <h3>${"⭐".repeat(data.rating)}</h3>
+        <p>${data.review}</p>
+        <h4>${data.name}</h4>
+        <small>${data.country}</small>
+        <hr>
       </div>
-
     `;
 
   });
