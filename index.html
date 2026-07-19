@@ -374,11 +374,19 @@ Leisure Fan Tours and Safaris is a trusted Kenyan tour company specializing in u
             <option>★★★☆☆ Good</option>
             <option>★★☆☆☆ Fair</option>
             <option>★☆☆☆☆ Poor</option>
+            
         </select>
 
         <textarea name="review" rows="6" placeholder="Tell us about your safari experience..." required></textarea>
 
         <button type="submit">Submit Review</button>
+        <form id="reviewForm">
+    ...
+</form>
+
+<div id="firebaseReviews"></div>
+
+<script type="module" src="reviews.js"></script>
 
     </form>
 
@@ -515,5 +523,7 @@ paypal.HostedButtons({
 <script src="script.js"></script>
 <script type="module" src="firebase.js"></script>
 <script type="module" src="reviews.js"></script>
+<script type="module" src="reviews.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
