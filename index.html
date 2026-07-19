@@ -291,58 +291,45 @@ Leisure Fan Tours and Safaris is a trusted Kenyan tour company specializing in u
 </section>
 
 <!-- ================= REVIEWS ================= -->
+<section id="leave-review" class="contact">
 
-<section id="reviews" class="reviews">
+<h2>Leave a Review</h2>
 
-<h2>What Our Guests Say</h2>
+<p>We'd love to hear about your safari experience with Leisure Fan Tours and Safaris.</p>
 
-<div class="review-container">
+<form id="reviewForm">
 
-<div class="review">
+<input type="text" id="reviewName" placeholder="Your Name" required>
 
-★★★★★
+<input type="text" id="reviewCountry" placeholder="Country" required>
 
-<p>
+<select id="reviewRating" required>
 
-"The best safari experience in Kenya. Professional guides and excellent customer service."
+<option value="">Select Rating</option>
+<option value="5">★★★★★ Excellent</option>
+<option value="4">★★★★☆ Very Good</option>
+<option value="3">★★★☆☆ Good</option>
+<option value="2">★★☆☆☆ Fair</option>
+<option value="1">★☆☆☆☆ Poor</option>
 
-</p>
+</select>
 
-<h4>Sarah W.</h4>
+<textarea
+id="reviewMessage"
+rows="6"
+placeholder="Tell us about your safari experience..."
+required></textarea>
 
-</div>
+<button type="submit">Submit Review</button>
 
-<div class="review">
+</form>
 
-★★★★★
+<h3>Customer Reviews</h3>
 
-<p>
-
-"Our family enjoyed every moment from Maasai Mara to Diani Beach."
-
-</p>
-
-<h4>David M.</h4>
-
-</div>
-
-<div class="review">
-
-★★★★★
-
-<p>
-
-"Luxury safari, beautiful lodges and unforgettable memories."
-
-</p>
-
-<h4>Anne K.</h4>
-
-</div>
-
-</div>
+<div id="firebaseReviews"></div>
 
 </section>
+
 <!-- ================= LEAVE A REVIEW ================= -->
 
 <section id="leave-review" class="contact">
@@ -520,10 +507,11 @@ paypal.HostedButtons({
 }).render("#paypal-container-ZC4PHKNXGEFRY");
 </script>
 
+<script src="https://www.paypal.com/sdk/js?client-id=BAAWPSUUavEGGk9BP-DAXCr2sZ1QEBCkTVT9PR_zpGX_iXutQlR3TkQVqL-KeMpju4vGcDGsWtJY36pvxw&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+
 <script src="script.js"></script>
 <script type="module" src="firebase.js"></script>
 <script type="module" src="reviews.js"></script>
-<script type="module" src="reviews.js"></script>
-<script src="script.js"></script>
+
 </body>
 </html>
