@@ -1,121 +1,143 @@
-import {
-    getAuth,
-    signOut,
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-const auth = getAuth();
-
-onAuthStateChanged(auth, (user) => {
-
-    if (!user) {
-
-        window.location.href = "login.html";
-
-    }
-
-});
-
-document.getElementById("logoutBtn").addEventListener("click", async () => {
-
-    await signOut(auth);
-
-    window.location.href = "login.html";
-
-});
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-const auth = getAuth();
-
-onAuthStateChanged(auth, (user) => {
-    if (!user) {
-        window.location.href = "login.html";
-    }
-});
 import { db } from "./firebase.js";
 
 import {
-    collection,
-    getDocs,
-    updateDoc,
-    deleteDoc,
-    doc
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  collection,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const reviewsList = document.getElementById("reviewsList");
+const auth = getAuth();
 
+const reviewsList = document.getElementById("reviewsList");
+const logoutBtn = document.getElementById("logoutBtn");
+
+// Check login
+onAuthStateChanged(auth, (user) => {
+    if (!user) {
+        window.location.href = "login.html";
+    } else {
+        loadReviews();
+    }
+});
+
+// Logout
+logoutBtn.addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "login.html";
+});
+
+// Load reviews
 async function loadReviews() {
 
-    reviewsList.innerHTML = "";
+    reviewsList.innerHTML = "<p>Loading reviews...</p>";
 
-    const snapshot = await getDocs(collection(db, "reviews"));
+    try {
 
-    snapshot.forEach((reviewDoc) => {
+        const snapshot = await getDocs(collection(db, "reviews"));
 
-        const data = reviewDoc.data();
+        reviewsList.innerHTML = "";
 
-        const card = document.createElement("div");
+        if (snapshot.empty) {
+            reviewsList.innerHTML = "<p>No reviews found.</p>";
+            return;
+        }
 
-        card.className = "review-card";
+        snapshot.forEach((reviewDoc) => {
 
-        card.innerHTML = `
-            <h3>${data.name}</h3>
-            <p><strong>Country:</strong> ${data.country}</p>
-            <p><strong>Rating:</strong> ${"⭐".repeat(data.rating)}</p>
-            <p>${data.review}</p>
-            <p><strong>Status:</strong> ${data.approved ? "Approved" : "Pending"}</p>
+            const data = reviewDoc.data();
 
-            <button class="approve" data-id="${reviewDoc.id}">
-                ${data.approved ? "Approved" : "Approve"}
-            </button>
+            const card = document.createElement("div");
 
-            <button class="delete" data-id="${reviewDoc.id}">
-                Delete
-            </button>
-        `;
+            card.className = "review-card";
 
-        reviewsList.appendChild(card);
+            card.innerHTML = `
+                <h3>${data.name}</h3>
 
-    });
+                <p><strong>Country:</strong> ${data.country}</p>
 
-    document.querySelectorAll(".approve").forEach(button => {
+                <p><strong>Rating:</strong> ${"⭐".repeat(data.rating)}</p>
 
-        button.addEventListener("click", async () => {
+                <p>${data.review}</p>
 
-            const id = button.dataset.id;
+                <p>
+                    <strong>Status:</strong>
+                    ${data.approved ? "✅ Approved" : "⏳ Pending"}
+                </p>
 
-            await updateDoc(doc(db, "reviews", id), {
-                approved: true
-            });
+                <button class="approve" data-id="${reviewDoc.id}">
+                    ${data.approved ? "Approved" : "Approve"}
+                </button>
 
-            alert("Review Approved");
+                <button class="delete" data-id="${reviewDoc.id}">
+                    Delete
+                </button>
 
-            loadReviews();
+                <hr>
+            `;
+
+            reviewsList.appendChild(card);
 
         });
 
-    });
+        // Approve buttons
+        document.querySelectorAll(".approve").forEach((button) => {
 
-    document.querySelectorAll(".delete").forEach(button => {
+            button.addEventListener("click", async () => {
 
-        button.addEventListener("click", async () => {
+                const id = button.dataset.id;
 
-            const id = button.dataset.id;
+                await updateDoc(doc(db, "reviews", id), {
+                    approved: true
+                });
 
-            if (confirm("Delete this review?")) {
-
-                await deleteDoc(doc(db, "reviews", id));
-
-                alert("Review Deleted");
+                alert("Review approved.");
 
                 loadReviews();
 
-            }
+            });
 
         });
 
-    });
+        // Delete buttons
+        document.querySelectorAll(".delete").forEach((button) => {
+
+            button.addEventListener("click", async () => {
+
+                const id = button.dataset.id;
+
+                if (confirm("Delete this review?")) {
+
+                    await deleteDoc(doc(db, "reviews", id));
+
+                    alert("Review deleted.");
+
+                    loadReviews();
+
+                }
+
+            });
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        reviewsList.innerHTML = `
+            <p style="color:red;">
+                Failed to load reviews.<br>
+                ${error.message}
+            </p>
+        `;
+
+    }
 
 }
-
-loadReviews();
