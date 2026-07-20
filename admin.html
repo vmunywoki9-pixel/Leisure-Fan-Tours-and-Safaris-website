@@ -8,7 +8,13 @@
 
 <link rel="stylesheet" href="admin.css">
 </head>
-
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        // User is logged in
+    } else {
+        window.location.href = "login.html";
+    }
+});
 <body>
 
 <h1>Review Management Dashboard</h1>
