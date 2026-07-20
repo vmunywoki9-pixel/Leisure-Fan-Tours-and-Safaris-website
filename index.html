@@ -129,7 +129,10 @@ Leisure Fan Tours and Safaris is a trusted Kenyan tour company specializing in u
 <h3>Maasai Mara Safari</h3>
 <p>Witness the Great Migration and the Big Five.</p>
 <h4>From USD 950</h4>
-<a href="#booking-form" class="btn">Book Now</a>
+<a href="#booking-form"
+   onclick="selectPackage('Dream Safari')">
+   <button>Book Now</button>
+</a>
 </div>
 
 <div class="card">
@@ -153,7 +156,10 @@ Leisure Fan Tours and Safaris is a trusted Kenyan tour company specializing in u
 <h3>Kenya Luxury Safari</h3>
 <p>Luxury lodges, private guides and unforgettable experiences.</p>
 <h4>From USD 2200</h4>
-<a href="#booking-form" class="btn">Book Now</a>
+<a href="#booking-form"
+   onclick="selectPackage('Kenya Luxury Safari')">
+   <button>Book Now</button>
+</a>
 </div>
 
 <div class="card">
@@ -399,7 +405,8 @@ name="message"
 rows="6"
 placeholder="Tell us about your dream safari..."
 required></textarea>
-
+<label>Selected Package</label>
+<input type="text" id="package" name="package" readonly>
 <button type="submit">
 Send Inquiry
 </button>
@@ -409,7 +416,7 @@ Send Inquiry
 </div>
 
 <section id="booking-form">
-    
+
 </section>>
 <!-- ================= FOOTER ================= -->
 
