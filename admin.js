@@ -1,58 +1,79 @@
-import { db } from "./firebase.js";
+import { app, db } from "./firebase.js";
 
 import {
-  getAuth,
-  onAuthStateChanged,
-  signOut
+    getAuth,
+    onAuthStateChanged,
+    signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
-  collection,
-  getDocs,
-  updateDoc,
-  deleteDoc,
-  doc
+    collection,
+    getDocs,
+    updateDoc,
+    deleteDoc,
+    doc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const auth = getAuth();
+const auth = getAuth(app);
 
 const reviewsList = document.getElementById("reviewsList");
 const logoutBtn = document.getElementById("logoutBtn");
 
-// Check login
+// Protect Admin Page
 onAuthStateChanged(auth, (user) => {
+
     if (!user) {
         window.location.href = "login.html";
-    } else {
-        loadReviews();
+        return;
     }
+
+    loadReviews();
+
 });
 
 // Logout
 logoutBtn.addEventListener("click", async () => {
-    await signOut(auth);
-    window.location.href = "login.html";
+
+    try {
+
+        await signOut(auth);
+
+        alert("Logged out successfully.");
+
+        window.location.href = "login.html";
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(error.message);
+
+    }
+
 });
 
-// Load reviews
+// Load Reviews
 async function loadReviews() {
 
     reviewsList.innerHTML = "<p>Loading reviews...</p>";
 
     try {
 
-        const snapshot = await getDocs(collection(db, "reviews"));
+        const querySnapshot = await getDocs(collection(db, "reviews"));
 
         reviewsList.innerHTML = "";
 
-        if (snapshot.empty) {
-            reviewsList.innerHTML = "<p>No reviews found.</p>";
+        if (querySnapshot.empty) {
+
+            reviewsList.innerHTML = "<p>No customer reviews found.</p>";
+
             return;
+
         }
 
-        snapshot.forEach((reviewDoc) => {
+        querySnapshot.forEach((review) => {
 
-            const data = reviewDoc.data();
+            const data = review.data();
 
             const card = document.createElement("div");
 
@@ -63,7 +84,7 @@ async function loadReviews() {
 
                 <p><strong>Country:</strong> ${data.country}</p>
 
-                <p><strong>Rating:</strong> ${"⭐".repeat(data.rating)}</p>
+                <p><strong>Rating:</strong> ${"⭐".repeat(data.rating || 0)}</p>
 
                 <p>${data.review}</p>
 
@@ -72,11 +93,11 @@ async function loadReviews() {
                     ${data.approved ? "✅ Approved" : "⏳ Pending"}
                 </p>
 
-                <button class="approve" data-id="${reviewDoc.id}">
+                <button class="approve-btn" data-id="${review.id}">
                     ${data.approved ? "Approved" : "Approve"}
                 </button>
 
-                <button class="delete" data-id="${reviewDoc.id}">
+                <button class="delete-btn" data-id="${review.id}">
                     Delete
                 </button>
 
@@ -87,39 +108,63 @@ async function loadReviews() {
 
         });
 
-        // Approve buttons
-        document.querySelectorAll(".approve").forEach((button) => {
+        // Approve Review
+
+        document.querySelectorAll(".approve-btn").forEach((button) => {
 
             button.addEventListener("click", async () => {
 
-                const id = button.dataset.id;
+                const reviewId = button.dataset.id;
 
-                await updateDoc(doc(db, "reviews", id), {
-                    approved: true
-                });
+                try {
 
-                alert("Review approved.");
+                    await updateDoc(doc(db, "reviews", reviewId), {
 
-                loadReviews();
+                        approved: true
+
+                    });
+
+                    alert("Review approved successfully.");
+
+                    loadReviews();
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    alert(error.message);
+
+                }
 
             });
 
         });
 
-        // Delete buttons
-        document.querySelectorAll(".delete").forEach((button) => {
+        // Delete Review
+
+        document.querySelectorAll(".delete-btn").forEach((button) => {
 
             button.addEventListener("click", async () => {
 
-                const id = button.dataset.id;
+                const reviewId = button.dataset.id;
 
-                if (confirm("Delete this review?")) {
+                const confirmDelete = confirm("Are you sure you want to delete this review?");
 
-                    await deleteDoc(doc(db, "reviews", id));
+                if (!confirmDelete) return;
 
-                    alert("Review deleted.");
+                try {
+
+                    await deleteDoc(doc(db, "reviews", reviewId));
+
+                    alert("Review deleted successfully.");
 
                     loadReviews();
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    alert(error.message);
 
                 }
 
@@ -133,7 +178,7 @@ async function loadReviews() {
 
         reviewsList.innerHTML = `
             <p style="color:red;">
-                Failed to load reviews.<br>
+                Error loading reviews.<br>
                 ${error.message}
             </p>
         `;
