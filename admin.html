@@ -5,17 +5,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Leisure Fan Tours - Review Admin</title>
-
-<link rel="stylesheet" href="admin.css">
-</head>
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        // User is logged in
-    } else {
-        window.location.href = "login.html";
-    }
-});
-<body>
 <form id="loginForm">
 
 <input
@@ -35,6 +24,16 @@ Login
 </button>
 
 </form>
+<link rel="stylesheet" href="admin.css">
+</head>
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        // User is logged in
+    } else {
+        window.location.href = "login.html";
+    }
+});
+<body>
 <h1>Review Management Dashboard</h1>
 
 <p>Approve customer reviews before they appear on the website.</p>
