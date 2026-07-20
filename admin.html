@@ -16,7 +16,25 @@ auth.onAuthStateChanged((user) => {
     }
 });
 <body>
+<form id="loginForm">
 
+<input
+type="email"
+id="email"
+placeholder="Email Address"
+required>
+
+<input
+type="password"
+id="password"
+placeholder="Password"
+required>
+
+<button type="submit">
+Login
+</button>
+
+</form>
 <h1>Review Management Dashboard</h1>
 
 <p>Approve customer reviews before they appear on the website.</p>
