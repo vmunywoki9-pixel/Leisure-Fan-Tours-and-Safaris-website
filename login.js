@@ -146,8 +146,10 @@ if (loginForm) {
 
     loginForm.addEventListener("submit", async (event) => {
 
+        // Prevent page refresh
         event.preventDefault();
 
+        // Get login details
         const email = document
             .getElementById("email")
             .value
@@ -157,96 +159,112 @@ if (loginForm) {
             .getElementById("password")
             .value;
 
+        // Check if fields are empty
         if (!email || !password) {
 
-            loginMessage.textContent =
-                "Please enter your email and password.";
+            if (loginMessage) {
+                loginMessage.textContent =
+                    "Please enter your email and password.";
 
-            loginMessage.style.color = "red";
+                loginMessage.style.color = "red";
+            }
 
             return;
         }
 
-        loginBtn.disabled = true;
-        loginBtn.textContent = "Signing in...";
+        // Show verification message
+        if (loginMessage) {
+            loginMessage.textContent =
+                "Verifying login...";
 
-        loginMessage.textContent =
-            "Checking your login details...";
-
-        loginMessage.style.color = "#00695c";
+            loginMessage.style.color = "blue";
+        }
 
         try {
 
-            await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
+            // Firebase authentication
+            const userCredential =
+                await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+
+            // Login successful
+            const user =
+                userCredential.user;
+
+            console.log(
+                "Login successful:",
+                user.email
             );
 
-            console.log("LOGIN SUCCESSFUL");
+            if (loginMessage) {
+                loginMessage.textContent =
+                    "Login successful! Loading dashboard...";
 
-            loginMessage.textContent =
-                "Login successful!";
+                loginMessage.style.color = "green";
+            }
 
-            loginMessage.style.color =
-                "green";
-
-            /*
-             IMPORTANT:
-
-             Do not manually show the dashboard here.
-
-             onAuthStateChanged() will automatically
-             detect the successful login and show
-             the dashboard.
-            */
+            // Do NOT manually hide the login here.
+            // onAuthStateChanged() will handle it.
 
         } catch (error) {
 
             console.error(
-                "LOGIN ERROR:",
-                error.code,
-                error.message
+                "Login error:",
+                error
             );
 
-            if (error.code === "auth/invalid-credential") {
+            // Display Firebase error
+            if (loginMessage) {
 
-                loginMessage.textContent =
-                    "Incorrect email or password.";
+                loginMessage.style.color = "red";
 
-            } else if (error.code === "auth/invalid-email") {
+                if (
+                    error.code ===
+                    "auth/invalid-credential"
+                ) {
 
-                loginMessage.textContent =
-                    "Please enter a valid email address.";
+                    loginMessage.textContent =
+                        "Incorrect email or password.";
 
-            } else if (error.code === "auth/too-many-requests") {
+                } else if (
+                    error.code ===
+                    "auth/user-not-found"
+                ) {
 
-                loginMessage.textContent =
-                    "Too many login attempts. Please try again later.";
+                    loginMessage.textContent =
+                        "No administrator account found with this email.";
 
-            } else {
+                } else if (
+                    error.code ===
+                    "auth/wrong-password"
+                ) {
 
-                loginMessage.textContent =
-                    "Login failed: " +
-                    error.message;
+                    loginMessage.textContent =
+                        "Incorrect password.";
 
+                } else if (
+                    error.code ===
+                    "auth/invalid-email"
+                ) {
+
+                    loginMessage.textContent =
+                        "Please enter a valid email address.";
+
+                } else {
+
+                    loginMessage.textContent =
+                        "Login failed: " +
+                        error.message;
+                }
             }
-
-            loginMessage.style.color =
-                "red";
-
-            loginBtn.disabled =
-                false;
-
-            loginBtn.textContent =
-                "Login";
-
         }
 
     });
 
 }
-
 
 // ==========================================
 // LOAD REVIEWS
