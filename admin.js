@@ -1,188 +1,723 @@
-import { app, db } from "./firebase.js";
+// ============================================
+// LEISURE FAN TOURS AND SAFARIS
+// ADMIN DASHBOARD
+// ============================================
 
 import {
-    getAuth,
+    auth,
+    db
+} from "./Firebase.js";
+
+import {
     onAuthStateChanged,
     signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
     collection,
-    getDocs,
+    query,
+    orderBy,
+    onSnapshot,
+    doc,
     updateDoc,
-    deleteDoc,
-    doc
+    deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const auth = getAuth(app);
 
-const reviewsList = document.getElementById("reviewsList");
-const logoutBtn = document.getElementById("logoutBtn");
+// ============================================
+// HTML ELEMENTS
+// ============================================
 
-// Protect Admin Page
-onAuthStateChanged(auth, (user) => {
+const logoutButton =
+    document.getElementById(
+        "logoutButton"
+    );
 
-    if (!user) {
-        window.location.href = "login.html";
+const adminReviewsContainer =
+    document.getElementById(
+        "adminReviewsContainer"
+    );
+
+const totalReviews =
+    document.getElementById(
+        "totalReviews"
+    );
+
+const approvedReviews =
+    document.getElementById(
+        "approvedReviews"
+    );
+
+const pendingReviews =
+    document.getElementById(
+        "pendingReviews"
+    );
+
+const adminMessage =
+    document.getElementById(
+        "adminMessage"
+    );
+
+const refreshReviews =
+    document.getElementById(
+        "refreshReviews"
+    );
+
+
+// ============================================
+// CHECK AUTHENTICATION
+// ============================================
+
+onAuthStateChanged(
+    auth,
+    (user) => {
+
+        if (!user) {
+
+            // User is not logged in
+            window.location.replace(
+                "Login.html"
+            );
+
+            return;
+        }
+
+
+        console.log(
+            "Admin logged in:",
+            user.email
+        );
+
+
+        // User is authenticated
+        loadAdminReviews();
+
+    }
+);
+
+
+// ============================================
+// LOAD ALL REVIEWS
+// ============================================
+
+function loadAdminReviews() {
+
+    if (!adminReviewsContainer) {
         return;
     }
 
-    loadReviews();
 
-});
+    adminReviewsContainer.innerHTML = `
 
-// Logout
-logoutBtn.addEventListener("click", async () => {
+        <div class="loading">
 
-    try {
+            Loading reviews...
 
-        await signOut(auth);
+        </div>
 
-        alert("Logged out successfully.");
+    `;
 
-        window.location.href = "login.html";
 
-    } catch (error) {
+    const reviewsQuery = query(
 
-        console.error(error);
+        collection(
+            db,
+            "reviews"
+        ),
 
-        alert(error.message);
+        orderBy(
+            "createdAt",
+            "desc"
+        )
 
-    }
+    );
 
-});
 
-// Load Reviews
-async function loadReviews() {
+    onSnapshot(
 
-    reviewsList.innerHTML = "<p>Loading reviews...</p>";
+        reviewsQuery,
 
-    try {
+        (snapshot) => {
 
-        const querySnapshot = await getDocs(collection(db, "reviews"));
+            adminReviewsContainer.innerHTML = "";
 
-        reviewsList.innerHTML = "";
 
-        if (querySnapshot.empty) {
+            let total = 0;
 
-            reviewsList.innerHTML = "<p>No customer reviews found.</p>";
+            let approved = 0;
 
-            return;
+            let pending = 0;
+
+
+            if (snapshot.empty) {
+
+                adminReviewsContainer.innerHTML = `
+
+                    <div class="no-reviews">
+
+                        <h3>
+                            No Reviews Found
+                        </h3>
+
+                        <p>
+                            Customer reviews will appear here.
+                        </p>
+
+                    </div>
+
+                `;
+
+
+                updateStatistics(
+                    0,
+                    0,
+                    0
+                );
+
+
+                return;
+            }
+
+
+            snapshot.forEach(
+                (reviewDoc) => {
+
+                    total++;
+
+
+                    const review =
+                        reviewDoc.data();
+
+
+                    if (
+                        review.approved === true
+                    ) {
+
+                        approved++;
+
+                    } else {
+
+                        pending++;
+
+                    }
+
+
+                    createReviewCard(
+
+                        reviewDoc.id,
+
+                        review
+
+                    );
+
+                }
+            );
+
+
+            updateStatistics(
+
+                total,
+
+                approved,
+
+                pending
+
+            );
+
+        },
+
+        (error) => {
+
+            console.error(
+                "Firestore error:",
+                error
+            );
+
+
+            adminReviewsContainer.innerHTML = `
+
+                <div class="error-message">
+
+                    <h3>
+                        Unable to load reviews
+                    </h3>
+
+                    <p>
+                        ${error.message}
+                    </p>
+
+                </div>
+
+            `;
 
         }
 
-        querySnapshot.forEach((review) => {
+    );
 
-            const data = review.data();
+}
 
-            const card = document.createElement("div");
 
-            card.className = "review-card";
+// ============================================
+// CREATE REVIEW CARD
+// ============================================
 
-            card.innerHTML = `
-                <h3>${data.name}</h3>
+function createReviewCard(
+    reviewId,
+    review
+) {
 
-                <p><strong>Country:</strong> ${data.country}</p>
+    const card =
+        document.createElement(
+            "div"
+        );
 
-                <p><strong>Rating:</strong> ${"⭐".repeat(data.rating || 0)}</p>
 
-                <p>${data.review}</p>
+    card.className =
+        "admin-review-card";
 
-                <p>
-                    <strong>Status:</strong>
-                    ${data.approved ? "✅ Approved" : "⏳ Pending"}
+
+    const name =
+        review.name ||
+        "Anonymous";
+
+
+    const email =
+        review.email ||
+        "No email provided";
+
+
+    const message =
+        review.message ||
+        "";
+
+
+    const rating =
+        Number(
+            review.rating || 5
+        );
+
+
+    const stars =
+        "★".repeat(rating) +
+        "☆".repeat(5 - rating);
+
+
+    const status =
+        review.approved === true
+            ? "Approved"
+            : "Pending";
+
+
+    const statusClass =
+        review.approved === true
+            ? "approved"
+            : "pending";
+
+
+    card.innerHTML = `
+
+        <div class="admin-review-top">
+
+            <div>
+
+                <h3>
+
+                    ${escapeHTML(name)}
+
+                </h3>
+
+                <p class="review-email">
+
+                    ${escapeHTML(email)}
+
                 </p>
 
-                <button class="approve-btn" data-id="${review.id}">
-                    ${data.approved ? "Approved" : "Approve"}
-                </button>
+            </div>
 
-                <button class="delete-btn" data-id="${review.id}">
-                    Delete
-                </button>
 
-                <hr>
-            `;
+            <span
+                class="review-status-badge ${statusClass}">
 
-            reviewsList.appendChild(card);
+                ${status}
 
-        });
+            </span>
 
-        // Approve Review
+        </div>
 
-        document.querySelectorAll(".approve-btn").forEach((button) => {
 
-            button.addEventListener("click", async () => {
+        <div class="admin-rating">
 
-                const reviewId = button.dataset.id;
+            ${stars}
 
-                try {
+        </div>
 
-                    await updateDoc(doc(db, "reviews", reviewId), {
 
-                        approved: true
+        <p class="admin-review-message">
 
-                    });
+            ${escapeHTML(message)}
 
-                    alert("Review approved successfully.");
+        </p>
 
-                    loadReviews();
 
-                } catch (error) {
+        <div class="review-actions">
 
-                    console.error(error);
+            <button
+                class="approve-button"
+                data-id="${reviewId}">
 
-                    alert(error.message);
-
+                ${
+                    review.approved === true
+                        ? "Unapprove"
+                        : "Approve"
                 }
 
-            });
+            </button>
 
-        });
 
-        // Delete Review
+            <button
+                class="delete-button"
+                data-id="${reviewId}">
 
-        document.querySelectorAll(".delete-btn").forEach((button) => {
+                Delete
 
-            button.addEventListener("click", async () => {
+            </button>
 
-                const reviewId = button.dataset.id;
+        </div>
 
-                const confirmDelete = confirm("Are you sure you want to delete this review?");
+    `;
 
-                if (!confirmDelete) return;
 
-                try {
+    adminReviewsContainer.appendChild(
+        card
+    );
 
-                    await deleteDoc(doc(db, "reviews", reviewId));
 
-                    alert("Review deleted successfully.");
+    // APPROVE / UNAPPROVE
 
-                    loadReviews();
+    const approveButton =
+        card.querySelector(
+            ".approve-button"
+        );
 
-                } catch (error) {
 
-                    console.error(error);
+    approveButton.addEventListener(
+        "click",
+        () => {
 
-                    alert(error.message);
+            toggleApproval(
 
-                }
+                reviewId,
 
-            });
+                review.approved === true
 
-        });
+            );
+
+        }
+    );
+
+
+    // DELETE
+
+    const deleteButton =
+        card.querySelector(
+            ".delete-button"
+        );
+
+
+    deleteButton.addEventListener(
+        "click",
+        () => {
+
+            deleteReview(
+                reviewId
+            );
+
+        }
+    );
+
+}
+
+
+// ============================================
+// APPROVE / UNAPPROVE REVIEW
+// ============================================
+
+async function toggleApproval(
+    reviewId,
+    currentlyApproved
+) {
+
+    try {
+
+        await updateDoc(
+
+            doc(
+                db,
+                "reviews",
+                reviewId
+            ),
+
+            {
+
+                approved:
+                    !currentlyApproved
+
+            }
+
+        );
+
+
+        showAdminMessage(
+
+            currentlyApproved
+                ? "Review has been unapproved."
+                : "Review has been approved.",
+
+            "success"
+
+        );
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
-        reviewsList.innerHTML = `
-            <p style="color:red;">
-                Error loading reviews.<br>
-                ${error.message}
-            </p>
-        `;
+
+        showAdminMessage(
+
+            "Unable to update review.",
+
+            "error"
+
+        );
 
     }
+
+}
+
+
+// ============================================
+// DELETE REVIEW
+// ============================================
+
+async function deleteReview(
+    reviewId
+) {
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete this review?"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        await deleteDoc(
+
+            doc(
+                db,
+                "reviews",
+                reviewId
+            )
+
+        );
+
+
+        showAdminMessage(
+
+            "Review deleted successfully.",
+
+            "success"
+
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        showAdminMessage(
+
+            "Unable to delete review.",
+
+            "error"
+
+        );
+
+    }
+
+}
+
+
+// ============================================
+// UPDATE STATISTICS
+// ============================================
+
+function updateStatistics(
+
+    total,
+
+    approved,
+
+    pending
+
+) {
+
+    if (totalReviews) {
+
+        totalReviews.textContent =
+            total;
+
+    }
+
+
+    if (approvedReviews) {
+
+        approvedReviews.textContent =
+            approved;
+
+    }
+
+
+    if (pendingReviews) {
+
+        pendingReviews.textContent =
+            pending;
+
+    }
+
+}
+
+
+// ============================================
+// LOGOUT
+// ============================================
+
+if (logoutButton) {
+
+    logoutButton.addEventListener(
+
+        "click",
+
+        async () => {
+
+            try {
+
+                await signOut(
+                    auth
+                );
+
+
+                window.location.replace(
+                    "Login.html"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Logout error:",
+                    error
+                );
+
+            }
+
+        }
+
+    );
+
+}
+
+
+// ============================================
+// REFRESH REVIEWS
+// ============================================
+
+if (refreshReviews) {
+
+    refreshReviews.addEventListener(
+
+        "click",
+
+        () => {
+
+            loadAdminReviews();
+
+        }
+
+    );
+
+}
+
+
+// ============================================
+// ADMIN MESSAGE
+// ============================================
+
+function showAdminMessage(
+    message,
+    type
+) {
+
+    if (!adminMessage) {
+        return;
+    }
+
+
+    adminMessage.textContent =
+        message;
+
+
+    adminMessage.className =
+        "admin-message " + type;
+
+
+    setTimeout(
+        () => {
+
+            adminMessage.textContent =
+                "";
+
+            adminMessage.className =
+                "admin-message";
+
+        },
+
+        3000
+
+    );
+
+}
+
+
+// ============================================
+// SECURITY: ESCAPE HTML
+// ============================================
+
+function escapeHTML(
+    text
+) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        text;
+
+
+    return div.innerHTML;
 
 }
