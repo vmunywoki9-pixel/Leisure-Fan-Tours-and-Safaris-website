@@ -145,46 +145,19 @@ loginForm.addEventListener(
         loginBtn.disabled = true;
 
         try {
-
-            await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
-
-            console.log(
-                "Login successful"
-            );
-
-            loginMessage.textContent =
-                "Login successful. Opening dashboard...";
-
-            loginMessage.style.color =
-                "green";
-
-            // The onAuthStateChanged function
-            // will automatically show the dashboard.
-
-        } catch (error) {
-
-            console.error(
-                "Login error:",
-                error
-            );
-
-            loginMessage.textContent =
-                "Login failed: " + error.message;
-
-            loginMessage.style.color =
-                "red";
-
-            loginBtn.disabled = false;
-
-        }
-
-    }
+await signInWithEmailAndPassword(
+    auth,
+    email,
+    password
 );
 
+alert("LOGIN SUCCESSFUL");
+
+loginSection.style.display = "none";
+adminDashboard.style.display = "block";
+
+loadReviews();
+    
 
 // ===============================
 // LOAD REVIEWS
