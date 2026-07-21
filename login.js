@@ -17,9 +17,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
-// ===============================
+// ==========================================
 // FIREBASE CONFIGURATION
-// ===============================
+// ==========================================
 
 const firebaseConfig = {
 
@@ -43,9 +43,9 @@ const firebaseConfig = {
 };
 
 
-// ===============================
+// ==========================================
 // INITIALIZE FIREBASE
-// ===============================
+// ==========================================
 
 const app = initializeApp(firebaseConfig);
 
@@ -54,9 +54,9 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 
-// ===============================
+// ==========================================
 // GET HTML ELEMENTS
-// ===============================
+// ==========================================
 
 const loginSection =
     document.getElementById("loginSection");
@@ -80,15 +80,13 @@ const logoutBtn =
     document.getElementById("logoutBtn");
 
 
-// ===============================
-// CHECK AUTHENTICATION
-// ===============================
+// ==========================================
+// CHECK LOGIN STATUS
+// ==========================================
 
 onAuthStateChanged(auth, (user) => {
 
     if (user) {
-
-        // User is already logged in
 
         console.log(
             "Administrator logged in:",
@@ -97,11 +95,15 @@ onAuthStateChanged(auth, (user) => {
 
         // Hide login
 
-        loginSection.style.display = "none";
+        if (loginSection) {
+            loginSection.style.display = "none";
+        }
 
         // Show dashboard
 
-        adminDashboard.style.display = "block";
+        if (adminDashboard) {
+            adminDashboard.style.display = "block";
+        }
 
         // Load reviews
 
@@ -109,78 +111,196 @@ onAuthStateChanged(auth, (user) => {
 
     } else {
 
-        // User is not logged in
+        // Show login
 
-        loginSection.style.display = "flex";
+        if (loginSection) {
+            loginSection.style.display = "flex";
+        }
 
-        adminDashboard.style.display = "none";
+        // Hide dashboard
+
+        if (adminDashboard) {
+            adminDashboard.style.display = "none";
+        }
 
     }
 
 });
 
 
-// ===============================
+// ==========================================
 // LOGIN
-// ===============================
+// ==========================================
 
-loginForm.addEventListener(
-    "submit",
-    async (event) => {
+if (loginForm) {
 
-        event.preventDefault();
+    loginForm.addEventListener(
+        "submit",
+        async (event) => {
 
-        const email =
-            document.getElementById("email").value.trim();
+            event.preventDefault();
 
-        const password =
-            document.getElementById("password").value;
+            const email =
+                document
+                .getElementById("email")
+                .value
+                .trim();
 
-        loginMessage.textContent =
-            "Verifying login...";
+            const password =
+                document
+                .getElementById("password")
+                .value;
 
-        loginMessage.style.color =
-            "#00695c";
 
-        loginBtn.disabled = true;
+            if (loginMessage) {
 
-        try {
-await signInWithEmailAndPassword(
-    auth,
-    email,
-    password
-);
+                loginMessage.textContent =
+                    "Verifying login...";
 
-alert("LOGIN SUCCESSFUL");
+                loginMessage.style.color =
+                    "#00695c";
 
-loginSection.style.display = "none";
-adminDashboard.style.display = "block";
+            }
 
-loadReviews();
-    
 
-// ===============================
+            if (loginBtn) {
+
+                loginBtn.disabled = true;
+
+                loginBtn.textContent =
+                    "Verifying...";
+
+            }
+
+
+            try {
+
+                // Firebase Authentication
+
+                await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+
+
+                console.log(
+                    "LOGIN SUCCESSFUL"
+                );
+
+
+                if (loginMessage) {
+
+                    loginMessage.textContent =
+                        "Login successful!";
+
+                    loginMessage.style.color =
+                        "green";
+
+                }
+
+
+                // Show dashboard immediately
+
+                if (loginSection) {
+
+                    loginSection.style.display =
+                        "none";
+
+                }
+
+
+                if (adminDashboard) {
+
+                    adminDashboard.style.display =
+                        "block";
+
+                }
+
+
+                // Load reviews
+
+                loadReviews();
+
+
+            } catch (error) {
+
+                console.error(
+                    "LOGIN ERROR:",
+                    error
+                );
+
+
+                if (loginMessage) {
+
+                    loginMessage.textContent =
+                        "Login failed: " +
+                        error.message;
+
+                    loginMessage.style.color =
+                        "red";
+
+                }
+
+
+                if (loginBtn) {
+
+                    loginBtn.disabled =
+                        false;
+
+                    loginBtn.textContent =
+                        "Login";
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================================
 // LOAD REVIEWS
-// ===============================
+// ==========================================
 
 async function loadReviews() {
 
+    if (!reviewsList) {
+
+        console.error(
+            "reviewsList element not found"
+        );
+
+        return;
+
+    }
+
+
     reviewsList.innerHTML =
         "<p>Loading customer reviews...</p>";
+
 
     try {
 
         const snapshot =
             await getDocs(
-                collection(db, "reviews")
+                collection(
+                    db,
+                    "reviews"
+                )
             );
+
 
         console.log(
             "Reviews found:",
             snapshot.size
         );
 
+
         reviewsList.innerHTML = "";
+
 
         if (snapshot.empty) {
 
@@ -198,27 +318,40 @@ async function loadReviews() {
                 const data =
                     reviewDoc.data();
 
+
                 const reviewId =
                     reviewDoc.id;
 
+
                 const name =
-                    data.name || "Anonymous";
+                    data.name ||
+                    "Anonymous";
+
 
                 const country =
-                    data.country || "Not provided";
+                    data.country ||
+                    "Not provided";
+
 
                 const review =
-                    data.review || "No review text";
+                    data.review ||
+                    "No review text";
+
 
                 const rating =
-                    Number(data.rating) || 0;
+                    Number(data.rating) ||
+                    0;
+
 
                 const approved =
                     data.approved === true;
 
 
                 const card =
-                    document.createElement("div");
+                    document.createElement(
+                        "div"
+                    );
+
 
                 card.className =
                     "review-card";
@@ -226,7 +359,9 @@ async function loadReviews() {
 
                 card.innerHTML = `
 
-                    <h3>${name}</h3>
+                    <h3>
+                        ${name}
+                    </h3>
 
                     <p>
                         <strong>Country:</strong>
@@ -243,7 +378,7 @@ async function loadReviews() {
                         ${review}
                     </p>
 
-                    <p class="status">
+                    <p>
                         <strong>Status:</strong>
                         ${
                             approved
@@ -255,20 +390,29 @@ async function loadReviews() {
                     <button
                         class="approve-btn"
                         data-id="${reviewId}"
-                        ${approved ? "disabled" : ""}
+                        ${
+                            approved
+                            ? "disabled"
+                            : ""
+                        }
                     >
+
                         ${
                             approved
                             ? "Already Approved"
                             : "Approve Review"
                         }
+
                     </button>
+
 
                     <button
                         class="delete-btn"
                         data-id="${reviewId}"
                     >
+
                         Delete Review
+
                     </button>
 
                 `;
@@ -282,12 +426,14 @@ async function loadReviews() {
         );
 
 
-        // ===============================
-        // APPROVE BUTTONS
-        // ===============================
+        // ==================================
+        // APPROVE REVIEW
+        // ==================================
 
         document
-            .querySelectorAll(".approve-btn")
+            .querySelectorAll(
+                ".approve-btn"
+            )
             .forEach(
                 (button) => {
 
@@ -298,14 +444,8 @@ async function loadReviews() {
                             const reviewId =
                                 button.dataset.id;
 
+
                             try {
-
-                                button.disabled =
-                                    true;
-
-                                button.textContent =
-                                    "Approving...";
-
 
                                 await updateDoc(
 
@@ -316,18 +456,19 @@ async function loadReviews() {
                                     ),
 
                                     {
-                                        approved: true
+                                        approved:
+                                            true
                                     }
 
                                 );
 
 
                                 alert(
-                                    "Review approved successfully."
+                                    "Review approved successfully!"
                                 );
 
 
-                                loadReviews();
+                                await loadReviews();
 
 
                             } catch (error) {
@@ -336,16 +477,11 @@ async function loadReviews() {
                                     error
                                 );
 
+
                                 alert(
                                     "Failed to approve review: " +
                                     error.message
                                 );
-
-                                button.disabled =
-                                    false;
-
-                                button.textContent =
-                                    "Approve Review";
 
                             }
 
@@ -356,12 +492,14 @@ async function loadReviews() {
             );
 
 
-        // ===============================
-        // DELETE BUTTONS
-        // ===============================
+        // ==================================
+        // DELETE REVIEW
+        // ==================================
 
         document
-            .querySelectorAll(".delete-btn")
+            .querySelectorAll(
+                ".delete-btn"
+            )
             .forEach(
                 (button) => {
 
@@ -400,11 +538,11 @@ async function loadReviews() {
 
 
                                 alert(
-                                    "Review deleted successfully."
+                                    "Review deleted successfully!"
                                 );
 
 
-                                loadReviews();
+                                await loadReviews();
 
 
                             } catch (error) {
@@ -412,6 +550,7 @@ async function loadReviews() {
                                 console.error(
                                     error
                                 );
+
 
                                 alert(
                                     "Failed to delete review: " +
@@ -430,7 +569,7 @@ async function loadReviews() {
     } catch (error) {
 
         console.error(
-            "Error loading reviews:",
+            "ERROR LOADING REVIEWS:",
             error
         );
 
@@ -439,11 +578,11 @@ async function loadReviews() {
 
             <p style="color:red;">
 
-                Failed to load reviews.
+                <strong>
+                    Failed to load reviews.
+                </strong>
 
                 <br><br>
-
-                Error:
 
                 ${error.message}
 
@@ -456,37 +595,42 @@ async function loadReviews() {
 }
 
 
-// ===============================
+// ==========================================
 // LOGOUT
-// ===============================
+// ==========================================
 
-logoutBtn.addEventListener(
-    "click",
-    async () => {
+if (logoutBtn) {
 
-        try {
+    logoutBtn.addEventListener(
+        "click",
+        async () => {
 
-            await signOut(auth);
+            try {
 
-            console.log(
-                "Administrator logged out"
-            );
+                await signOut(auth);
 
-            // onAuthStateChanged will
-            // automatically show login page
 
-        } catch (error) {
+                console.log(
+                    "Administrator logged out"
+                );
 
-            console.error(
-                "Logout error:",
-                error
-            );
 
-            alert(
-                "Logout failed: " +
-                error.message
-            );
+            } catch (error) {
+
+                console.error(
+                    "LOGOUT ERROR:",
+                    error
+                );
+
+
+                alert(
+                    "Logout failed: " +
+                    error.message
+                );
+
+            }
 
         }
+    );
 
-    }
+}
