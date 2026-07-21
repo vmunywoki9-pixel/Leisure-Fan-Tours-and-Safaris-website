@@ -142,132 +142,108 @@ onAuthStateChanged(auth, (user) => {
 // ==========================================
 // LOGIN
 // ==========================================
-
 if (loginForm) {
 
-    loginForm.addEventListener(
-        "submit",
-        async (event) => {
+    loginForm.addEventListener("submit", async (event) => {
 
-            event.preventDefault();
+        event.preventDefault();
 
-            const email =
-                document
-                .getElementById("email")
-                .value
-                .trim();
+        const email = document
+            .getElementById("email")
+            .value
+            .trim();
 
-            const password =
-                document
-                .getElementById("password")
-                .value;
+        const password = document
+            .getElementById("password")
+            .value;
 
+        if (!email || !password) {
 
-            if (loginMessage) {
+            loginMessage.textContent =
+                "Please enter your email and password.";
+
+            loginMessage.style.color = "red";
+
+            return;
+        }
+
+        loginBtn.disabled = true;
+        loginBtn.textContent = "Signing in...";
+
+        loginMessage.textContent =
+            "Checking your login details...";
+
+        loginMessage.style.color = "#00695c";
+
+        try {
+
+            await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+            console.log("LOGIN SUCCESSFUL");
+
+            loginMessage.textContent =
+                "Login successful!";
+
+            loginMessage.style.color =
+                "green";
+
+            /*
+             IMPORTANT:
+
+             Do not manually show the dashboard here.
+
+             onAuthStateChanged() will automatically
+             detect the successful login and show
+             the dashboard.
+            */
+
+        } catch (error) {
+
+            console.error(
+                "LOGIN ERROR:",
+                error.code,
+                error.message
+            );
+
+            if (error.code === "auth/invalid-credential") {
 
                 loginMessage.textContent =
-                    "Verifying login...";
+                    "Incorrect email or password.";
 
-                loginMessage.style.color =
-                    "#00695c";
+            } else if (error.code === "auth/invalid-email") {
 
-            }
+                loginMessage.textContent =
+                    "Please enter a valid email address.";
 
+            } else if (error.code === "auth/too-many-requests") {
 
-            if (loginBtn) {
+                loginMessage.textContent =
+                    "Too many login attempts. Please try again later.";
 
-                loginBtn.disabled = true;
+            } else {
 
-                loginBtn.textContent =
-                    "Verifying...";
-
-            }
-
-
-            try {
-
-                // Firebase Authentication
-
-                await signInWithEmailAndPassword(
-                    auth,
-                    email,
-                    password
-                );
-
-
-                console.log(
-                    "LOGIN SUCCESSFUL"
-                );
-
-
-                if (loginMessage) {
-
-                    loginMessage.textContent =
-                        "Login successful!";
-
-                    loginMessage.style.color =
-                        "green";
-
-                }
-
-
-                // Show dashboard immediately
-
-                if (loginSection) {
-
-                    loginSection.style.display =
-                        "none";
-
-                }
-
-
-                if (adminDashboard) {
-
-                    adminDashboard.style.display =
-                        "block";
-
-                }
-
-
-                // Load reviews
-
-                loadReviews();
-
-
-            } catch (error) {
-
-                console.error(
-                    "LOGIN ERROR:",
-                    error
-                );
-
-
-                if (loginMessage) {
-
-                    loginMessage.textContent =
-                        "Login failed: " +
-                        error.message;
-
-                    loginMessage.style.color =
-                        "red";
-
-                }
-
-
-                if (loginBtn) {
-
-                    loginBtn.disabled =
-                        false;
-
-                    loginBtn.textContent =
-                        "Login";
-
-                }
+                loginMessage.textContent =
+                    "Login failed: " +
+                    error.message;
 
             }
+
+            loginMessage.style.color =
+                "red";
+
+            loginBtn.disabled =
+                false;
+
+            loginBtn.textContent =
+                "Login";
 
         }
-    );
+
+    });
 
 }
 
