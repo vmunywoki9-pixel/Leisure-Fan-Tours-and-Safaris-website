@@ -50,7 +50,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
-
+setPersistence(
+    auth,
+    browserSessionPersistence
+).catch((error) => {
+    console.error(
+        "Authentication persistence error:",
+        error
+    );
+});
 const db = getFirestore(app);
 
 
