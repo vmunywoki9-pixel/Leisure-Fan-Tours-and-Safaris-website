@@ -1,107 +1,93 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>Leisure Fan Tours and Safaris | Admin Login</title>  <style>  
+*{  
+margin:0;  
+padding:0;  
+box-sizing:border-box;  
+font-family:Arial,sans-serif;  
+}  
+  
+body{  
+background:#f5f5f5;  
+display:flex;  
+justify-content:center;  
+align-items:center;  
+height:100vh;  
+}  
+  
+.login-box{  
+background:#fff;  
+padding:40px;  
+width:350px;  
+border-radius:10px;  
+box-shadow:0 5px 20px rgba(0,0,0,.2);  
+text-align:center;  
+}  
+  
+.login-box img{  
+width:90px;  
+margin-bottom:15px;  
+}  
+  
+.login-box h2{  
+color:#00695c;  
+margin-bottom:10px;  
+}  
+  
+.login-box p{  
+margin-bottom:20px;  
+color:#666;  
+}  
+  
+.login-box input{  
+width:100%;  
+padding:12px;  
+margin:10px 0;  
+border:1px solid #ccc;  
+border-radius:5px;  
+font-size:16px;  
+}  
+  
+.login-box button{  
+width:100%;  
+padding:12px;  
+background:#00695c;  
+color:white;  
+border:none;  
+border-radius:5px;  
+font-size:17px;  
+cursor:pointer;  
+}  
+  
+.login-box button:hover{  
+background:#004d40;  
+}  
+  
+.back{  
+display:block;  
+margin-top:20px;  
+text-decoration:none;  
+color:#00695c;  
+font-weight:bold;  
+}  
+</style>  </head>  <body>  <div class="login-box">  <img src="logo.png" alt="Leisure Fan Tours Logo">  <h2>Administrator Login</h2>  <p>Leisure Fan Tours and Safaris</p>  <form id="loginForm">  <input  
+type="email"  
+id="email"  
+placeholder="Email Address"  
+required>
 
-<head>
-    <meta charset="UTF-8">
+<input  
+type="password"  
+id="password"  
+placeholder="Password"  
+required>
 
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-    <title>Admin Login | Leisure Fan Tours and Safaris</title>
-
-    <link rel="stylesheet" href="Admin.css">
-</head>
-
-<body class="login-page">
-
-    <div class="login-container">
-
-        <div class="login-card">
-
-            <div class="login-logo">
-                <div class="logo-circle">
-                    LF
-                </div>
-            </div>
-
-            <h1>Leisure Fan Tours</h1>
-
-            <p class="login-subtitle">
-                Admin Dashboard
-            </p>
-
-            <h2>Administrator Login</h2>
-
-            <form id="loginForm">
-
-                <div class="form-group">
-
-                    <label for="email">
-                        Email Address
-                    </label>
-
-                    <input
-                        type="email"
-                        id="email"
-                        placeholder="Enter admin email"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="password">
-                        Password
-                    </label>
-
-                    <input
-                        type="password"
-                        id="password"
-                        placeholder="Enter password"
-                        required
-                    >
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    id="loginButton"
-                    class="login-button">
-
-                    Login
-
-                </button>
-
-            </form>
-
-
-            <div
-                id="loginMessage"
-                class="login-message">
-            </div>
-
-
-            <a
-                href="index.html"
-                class="back-home">
-
-                ← Back to Website
-
-            </a>
-
-        </div>
-
-    </div>
-
-
-    <script
-        type="module"
-        src="Login.js">
-    </script>
-
-</body>
-
+<button type="submit">  
+Login  
+</button>  </form>  <a href="index.html" class="back">  
+← Back to Website  
+</a>  </div>  <script type="module" src="login.js"></script>  </body>  
 </html>
