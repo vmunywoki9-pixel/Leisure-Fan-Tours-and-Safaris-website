@@ -1,10 +1,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
 import {
     getAuth,
     signInWithEmailAndPassword,
     onAuthStateChanged,
-    signOut
+    signOut,
+    setPersistence,
+    browserSessionPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
@@ -50,6 +51,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
+
 setPersistence(
     auth,
     browserSessionPersistence
@@ -58,6 +60,7 @@ setPersistence(
         "Authentication persistence error:",
         error
     );
+});
 });
 const db = getFirestore(app);
 
