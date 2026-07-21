@@ -1,12 +1,14 @@
-[21/07/2026, 17:02:54] Leisure Fan Tours and Safaris: 3976533
-[21/07/2026, 19:58:46] I2: import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
     getAuth,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
+    getFirestore,
     collection,
     getDocs,
     updateDoc,
@@ -14,63 +16,195 @@ import {
     doc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// ===============================
+// FIREBASE CONFIGURATION
+// ===============================
 
 const firebaseConfig = {
+
     apiKey: "AIzaSyBbar43VLO99kgMLiC90drSXiVADS-xyaw",
-    authDomain: "leisure-fan-tours-and-safaris.firebaseapp.com",
-    projectId: "leisure-fan-tours-and-safaris",
-    storageBucket: "leisure-fan-tours-and-safaris.firebasestorage.app",
-    messagingSenderId: "199881242074",
-    appId: "1:199881242074:web:887ced6c38c7de0712bce3"
+
+    authDomain:
+        "leisure-fan-tours-and-safaris.firebaseapp.com",
+
+    projectId:
+        "leisure-fan-tours-and-safaris",
+
+    storageBucket:
+        "leisure-fan-tours-and-safaris.firebasestorage.app",
+
+    messagingSenderId:
+        "199881242074",
+
+    appId:
+        "1:199881242074:web:887ced6c38c7de0712bce3"
+
 };
 
+
+// ===============================
+// INITIALIZE FIREBASE
+// ===============================
+
 const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
+
 const db = getFirestore(app);
 
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
-    e.preventDefault();
+// ===============================
+// GET HTML ELEMENTS
+// ===============================
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+const loginSection =
+    document.getElementById("loginSection");
 
-    try {
+const adminDashboard =
+    document.getElementById("adminDashboard");
 
-        await signInWithEmailAndPassword(auth, email, password);
+const loginForm =
+    document.getElementById("loginForm");
 
-        // Hide login section
-        document.querySelector(".login-box").style.display = "none";
+const loginBtn =
+    document.getElementById("loginBtn");
 
-        // Show admin dashboard
-        document.getElementById("adminDashboard").style.display = "block";
+const loginMessage =
+    document.getElementById("loginMessage");
+
+const reviewsList =
+    document.getElementById("reviewsList");
+
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+
+// ===============================
+// CHECK AUTHENTICATION
+// ===============================
+
+onAuthStateChanged(auth, (user) => {
+
+    if (user) {
+
+        // User is already logged in
+
+        console.log(
+            "Administrator logged in:",
+            user.email
+        );
+
+        // Hide login
+
+        loginSection.style.display = "none";
+
+        // Show dashboard
+
+        adminDashboard.style.display = "block";
 
         // Load reviews
+
         loadReviews();
 
-    } catch (error) {
+    } else {
 
-        console.error(error);
+        // User is not logged in
 
-        alert("Invalid email or password.");
+        loginSection.style.display = "flex";
+
+        adminDashboard.style.display = "none";
 
     }
 
 });
 
 
-// Load Reviews
+// ===============================
+// LOGIN
+// ===============================
+
+loginForm.addEventListener(
+    "submit",
+    async (event) => {
+
+        event.preventDefault();
+
+        const email =
+            document.getElementById("email").value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+        loginMessage.textContent =
+            "Verifying login...";
+
+        loginMessage.style.color =
+            "#00695c";
+
+        loginBtn.disabled = true;
+
+        try {
+
+            await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+            console.log(
+                "Login successful"
+            );
+
+            loginMessage.textContent =
+                "Login successful. Opening dashboard...";
+
+            loginMessage.style.color =
+                "green";
+
+            // The onAuthStateChanged function
+            // will automatically show the dashboard.
+
+        } catch (error) {
+
+            console.error(
+                "Login error:",
+                error
+            );
+
+            loginMessage.textContent =
+                "Login failed: " + error.message;
+
+            loginMessage.style.color =
+                "red";
+
+            loginBtn.disabled = false;
+
+        }
+
+    }
+);
+
+
+// ===============================
+// LOAD REVIEWS
+// ===============================
+
 async function loadReviews() {
 
-    const reviewsList = document.getElementById("reviewsList");
-
-    reviewsList.innerHTML = "<p>Loading reviews...</p>";
+    reviewsList.innerHTML =
+        "<p>Loading customer reviews...</p>";
 
     try {
 
-        const snapshot = await getDocs(
-            collection(db, "reviews")
+        const snapshot =
+            await getDocs(
+                collection(db, "reviews")
+            );
+
+        console.log(
+            "Reviews found:",
+            snapshot.size
         );
 
         reviewsList.innerHTML = "";
@@ -78,120 +212,308 @@ async function loadReviews() {
         if (snapshot.empty) {
 
             reviewsList.innerHTML =
-                "<p>No reviews found.</p>";
+                "<p>No customer reviews found.</p>";
 
             return;
 
         }
 
-        snapshot.forEach((reviewDoc) => {
 
-            const data = reviewDoc.data();
+        snapshot.forEach(
+            (reviewDoc) => {
 
-            const card =
-                document.createElement("div");
+                const data =
+                    reviewDoc.data();
 
-            card.className = "review-card";
+                const reviewId =
+                    reviewDoc.id;
 
-            card.innerHTML = `
-                <h3>${data.name}</h3>
+                const name =
+                    data.name || "Anonymous";
 
-                <p>
-                    <strong>Country:</strong>
-                    ${data.country}
-                </p>
+                const country =
+                    data.country || "Not provided";
 
-                <p>
-                    <strong>Rating:</strong>
-                    ${"⭐".repeat(data.rating || 0)}
-                </p>
+                const review =
+                    data.review || "No review text";
 
-                <p>${data.review}</p>
+                const rating =
+                    Number(data.rating) || 0;
 
-                <p>
-                    <strong>Status:</strong>
-                    ${data.approved
-                        ? "✅ Approved"
-                        : "⏳ Pending"}
-                </p>
+                const approved =
+                    data.approved === true;
 
-                <button
-                    onclick="approveReview('${reviewDoc.id}')">
-                    ${data.approved
-                        ? "Approved"
-                        : "Approve"}
-                </button>
 
-                <button
-                    onclick="deleteReview('${reviewDoc.id}')">
-                    Delete
-                </button>
-            `;
+                const card =
+                    document.createElement("div");
 
-            reviewsList.appendChild(card);
+                card.className =
+                    "review-card";
 
-        });
+
+                card.innerHTML = `
+
+                    <h3>${name}</h3>
+
+                    <p>
+                        <strong>Country:</strong>
+                        ${country}
+                    </p>
+
+                    <p>
+                        <strong>Rating:</strong>
+                        ${"⭐".repeat(rating)}
+                    </p>
+
+                    <p>
+                        <strong>Review:</strong>
+                        ${review}
+                    </p>
+
+                    <p class="status">
+                        <strong>Status:</strong>
+                        ${
+                            approved
+                            ? "✅ Approved"
+                            : "⏳ Pending"
+                        }
+                    </p>
+
+                    <button
+                        class="approve-btn"
+                        data-id="${reviewId}"
+                        ${approved ? "disabled" : ""}
+                    >
+                        ${
+                            approved
+                            ? "Already Approved"
+                            : "Approve Review"
+                        }
+                    </button>
+
+                    <button
+                        class="delete-btn"
+                        data-id="${reviewId}"
+                    >
+                        Delete Review
+                    </button>
+
+                `;
+
+
+                reviewsList.appendChild(
+                    card
+                );
+
+            }
+        );
+
+
+        // ===============================
+        // APPROVE BUTTONS
+        // ===============================
+
+        document
+            .querySelectorAll(".approve-btn")
+            .forEach(
+                (button) => {
+
+                    button.addEventListener(
+                        "click",
+                        async () => {
+
+                            const reviewId =
+                                button.dataset.id;
+
+                            try {
+
+                                button.disabled =
+                                    true;
+
+                                button.textContent =
+                                    "Approving...";
+
+
+                                await updateDoc(
+
+                                    doc(
+                                        db,
+                                        "reviews",
+                                        reviewId
+                                    ),
+
+                                    {
+                                        approved: true
+                                    }
+
+                                );
+
+
+                                alert(
+                                    "Review approved successfully."
+                                );
+
+
+                                loadReviews();
+
+
+                            } catch (error) {
+
+                                console.error(
+                                    error
+                                );
+
+                                alert(
+                                    "Failed to approve review: " +
+                                    error.message
+                                );
+
+                                button.disabled =
+                                    false;
+
+                                button.textContent =
+                                    "Approve Review";
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+
+        // ===============================
+        // DELETE BUTTONS
+        // ===============================
+
+        document
+            .querySelectorAll(".delete-btn")
+            .forEach(
+                (button) => {
+
+                    button.addEventListener(
+                        "click",
+                        async () => {
+
+                            const reviewId =
+                                button.dataset.id;
+
+
+                            const confirmed =
+                                confirm(
+                                    "Are you sure you want to delete this review?"
+                                );
+
+
+                            if (!confirmed) {
+
+                                return;
+
+                            }
+
+
+                            try {
+
+                                await deleteDoc(
+
+                                    doc(
+                                        db,
+                                        "reviews",
+                                        reviewId
+                                    )
+
+                                );
+
+
+                                alert(
+                                    "Review deleted successfully."
+                                );
+
+
+                                loadReviews();
+
+
+                            } catch (error) {
+
+                                console.error(
+                                    error
+                                );
+
+                                alert(
+                                    "Failed to delete review: " +
+                                    error.message
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Error loading reviews:",
+            error
+        );
 
-        reviewsList.innerHTML =
-            `<p style="color:red;">
+
+        reviewsList.innerHTML = `
+
+            <p style="color:red;">
+
+                Failed to load reviews.
+
+                <br><br>
+
+                Error:
+
                 ${error.message}
-            </p>`;
+
+            </p>
+
+        `;
 
     }
 
 }
 
 
-// Approve Review
-window.approveReview = async function(id) {
+// ===============================
+// LOGOUT
+// ===============================
 
-    try {
+logoutBtn.addEventListener(
+    "click",
+    async () => {
 
-        await updateDoc(
-            doc(db, "reviews", id),
-            {
-                approved: true
-            }
-        );
+        try {
 
-        alert("Review approved.");
+            await signOut(auth);
 
-        loadReviews();
+            console.log(
+                "Administrator logged out"
+            );
 
-    } catch (error) {
+            // onAuthStateChanged will
+            // automatically show login page
 
-        alert(error.message);
+        } catch (error) {
 
-    }
+            console.error(
+                "Logout error:",
+                error
+            );
 
-};
+            alert(
+                "Logout failed: " +
+                error.message
+            );
 
-
-// Delete Review
-window.deleteReview = async function(id) {
-
-    if (!confirm("Delete this review?")) {
-        return;
-    }
-
-    try {
-
-        await deleteDoc(
-            doc(db, "reviews", id)
-        );
-
-        alert("Review deleted.");
-
-        loadReviews();
-
-    } catch (error) {
-
-        alert(error.message);
+        }
 
     }
-
-};
