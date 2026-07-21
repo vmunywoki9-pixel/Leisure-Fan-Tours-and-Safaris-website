@@ -143,7 +143,29 @@ onAuthStateChanged(auth, (user) => {
 // LOGIN
 // ==========================================
 if (loginForm) {
+<form id="loginForm">
 
+    <input
+        type="email"
+        id="email"
+        placeholder="Admin Email"
+        required
+    >
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        required
+    >
+
+    <button type="submit">
+        Login
+    </button>
+
+    <p id="loginMessage"></p>
+
+</form>
     loginForm.addEventListener("submit", async (event) => {
 
         // Prevent page refresh
