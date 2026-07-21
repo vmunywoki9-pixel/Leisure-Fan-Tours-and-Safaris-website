@@ -1,182 +1,43 @@
-// ============================================
-// LEISURE FAN TOURS AND SAFARIS
-// ADMIN LOGIN
-// ============================================
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-    auth
-} from "./Firebase.js";
-
-import {
-    signInWithEmailAndPassword
+getAuth,
+signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+const firebaseConfig = {
+apiKey: "AIzaSyBbar43VLO99kgMLiC90drSXiVADS-xyaw",
+authDomain: "leisure-fan-tours-and-safaris.firebaseapp.com",
+projectId: "leisure-fan-tours-and-safaris",
+storageBucket: "leisure-fan-tours-and-safaris.firebasestorage.app",
+messagingSenderId: "199881242074",
+appId: "1:199881242074:web:887ced6c38c7de0712bce3"
+};
 
-// ============================================
-// GET HTML ELEMENTS
-// ============================================
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-const loginForm =
-    document.getElementById("loginForm");
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
-const emailInput =
-    document.getElementById("email");
+e.preventDefault();  
 
-const passwordInput =
-    document.getElementById("password");
+const email = document.getElementById("email").value;  
+const password = document.getElementById("password").value;  
 
-const loginButton =
-    document.getElementById("loginButton");
+try {  
 
-const loginMessage =
-    document.getElementById("loginMessage");
+    await signInWithEmailAndPassword(auth, email, password);  
 
+    alert("Login Successful");  
 
-// ============================================
-// LOGIN FUNCTION
-// ============================================
+    window.location.href = "admin.html";  
 
-loginForm.addEventListener("submit", async (event) => {
+} catch (error) {  
 
-    event.preventDefault();
+    alert("Invalid email or password.");  
 
-    const email =
-        emailInput.value.trim();
+    console.error(error);  
 
-    const password =
-        passwordInput.value;
-
-
-    if (!email || !password) {
-
-        showMessage(
-            "Please enter your email and password.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    try {
-
-        loginButton.disabled = true;
-
-        loginButton.textContent =
-            "Logging in...";
-
-
-        showMessage(
-            "",
-            ""
-        );
-
-
-        // Firebase Authentication
-        await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
-        );
-
-
-        showMessage(
-            "Login successful. Redirecting...",
-            "success"
-        );
-
-
-        // Redirect to Admin Dashboard
-        setTimeout(() => {
-
-            window.location.href =
-                "Admin.html";
-
-        }, 800);
-
-
-    } catch (error) {
-
-        console.error(
-            "Login Error:",
-            error
-        );
-
-
-        let errorMessage =
-            "Login failed. Please try again.";
-
-
-        if (
-            error.code ===
-            "auth/invalid-credential"
-        ) {
-
-            errorMessage =
-                "Invalid email or password.";
-
-        }
-
-        else if (
-            error.code ===
-            "auth/user-not-found"
-        ) {
-
-            errorMessage =
-                "No admin account found with this email.";
-
-        }
-
-        else if (
-            error.code ===
-            "auth/wrong-password"
-        ) {
-
-            errorMessage =
-                "Incorrect password.";
-
-        }
-
-        else if (
-            error.code ===
-            "auth/invalid-email"
-        ) {
-
-            errorMessage =
-                "Please enter a valid email address.";
-
-        }
-
-
-        showMessage(
-            errorMessage,
-            "error"
-        );
-
-
-        loginButton.disabled = false;
-
-        loginButton.textContent =
-            "Login";
-
-    }
+}
 
 });
-
-
-// ============================================
-// SHOW LOGIN MESSAGE
-// ============================================
-
-function showMessage(
-    message,
-    type
-) {
-
-    loginMessage.textContent =
-        message;
-
-    loginMessage.className =
-        "login-message " + type;
-
 }
