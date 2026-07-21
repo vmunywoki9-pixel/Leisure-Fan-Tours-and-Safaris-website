@@ -1,95 +1,23 @@
-import { db } from "./firebase.js";
-
+// Firebase Configuration
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where,
-  serverTimestamp
+getFirestore
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Review Form
-const reviewForm = document.getElementById("reviewForm");
+const firebaseConfig = {
+apiKey: "AIzaSyBbar43VLO99kgMLiC90drSXiVADS-xyaw",
+authDomain: "leisure-fan-tours-and-safaris.firebaseapp.com",
+projectId: "leisure-fan-tours-and-safaris",
+storageBucket: "leisure-fan-tours-and-safaris.firebasestorage.app",
+messagingSenderId: "199881242074",
+appId: "1:199881242074:web:887ced6c38c7de0712bce3",
+measurementId: "G-4ERCTKSFRY"
+};
 
-if (reviewForm) {
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-    reviewForm.addEventListener("submit", async (e) => {
+// Firestore Database
+const db = getFirestore(app);
 
-        e.preventDefault();
-
-        const name = document.getElementById("reviewName").value.trim();
-        const country = document.getElementById("reviewCountry").value.trim();
-        const rating = Number(document.getElementById("reviewRating").value);
-        const review = document.getElementById("reviewMessage").value.trim();
-
-        if (!name || !country || !rating || !review) {
-            alert("Please complete all fields.");
-            return;
-        }
-
-        try {
-
-            await addDoc(collection(db, "reviews"), {
-                name: name,
-                country: country,
-                rating: rating,
-                review: review,
-                approved: false,
-                createdAt: serverTimestamp()
-            });
-
-            alert("✅ Thank you! Your review has been submitted for approval.");
-
-            reviewForm.reset();
-
-        } catch (error) {
-
-            console.error(error);
-            alert("❌ Failed to submit review.");
-
-        }
-
-    });
-
-}
-
-// Display approved reviews
-async function loadReviews() {
-
-    const container = document.getElementById("firebaseReviews");
-
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    const q = query(
-        collection(db, "reviews"),
-        where("approved", "==", true)
-    );
-
-    const snapshot = await getDocs(q);
-
-    if (snapshot.empty) {
-        container.innerHTML = "<p>No customer reviews yet.</p>";
-        return;
-    }
-
-    snapshot.forEach((doc) => {
-
-        const data = doc.data();
-
-        container.innerHTML += `
-            <div class="review-card">
-                <h3>${"⭐".repeat(data.rating)}</h3>
-                <p>${data.review}</p>
-                <h4>${data.name}</h4>
-                <small>${data.country}</small>
-            </div>
-        `;
-
-    });
-
-}
-
-loadReviews();
+export { db };
