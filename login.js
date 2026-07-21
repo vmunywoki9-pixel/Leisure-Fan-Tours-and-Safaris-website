@@ -1,42 +1,182 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+// ============================================
+// LEISURE FAN TOURS AND SAFARIS
+// ADMIN LOGIN
+// ============================================
+
 import {
-    getAuth,
+    auth
+} from "./Firebase.js";
+
+import {
     signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyBbar43VLO99kgMLiC90drSXiVADS-xyaw",
-    authDomain: "leisure-fan-tours-and-safaris.firebaseapp.com",
-    projectId: "leisure-fan-tours-and-safaris",
-    storageBucket: "leisure-fan-tours-and-safaris.firebasestorage.app",
-    messagingSenderId: "199881242074",
-    appId: "1:199881242074:web:887ced6c38c7de0712bce3"
-};
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// ============================================
+// GET HTML ELEMENTS
+// ============================================
 
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
+const loginForm =
+    document.getElementById("loginForm");
 
-    e.preventDefault();
+const emailInput =
+    document.getElementById("email");
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+const passwordInput =
+    document.getElementById("password");
+
+const loginButton =
+    document.getElementById("loginButton");
+
+const loginMessage =
+    document.getElementById("loginMessage");
+
+
+// ============================================
+// LOGIN FUNCTION
+// ============================================
+
+loginForm.addEventListener("submit", async (event) => {
+
+    event.preventDefault();
+
+    const email =
+        emailInput.value.trim();
+
+    const password =
+        passwordInput.value;
+
+
+    if (!email || !password) {
+
+        showMessage(
+            "Please enter your email and password.",
+            "error"
+        );
+
+        return;
+    }
+
 
     try {
 
-        await signInWithEmailAndPassword(auth, email, password);
+        loginButton.disabled = true;
 
-        alert("Login Successful");
+        loginButton.textContent =
+            "Logging in...";
 
-        window.location.href = "admin.html";
+
+        showMessage(
+            "",
+            ""
+        );
+
+
+        // Firebase Authentication
+        await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
+
+
+        showMessage(
+            "Login successful. Redirecting...",
+            "success"
+        );
+
+
+        // Redirect to Admin Dashboard
+        setTimeout(() => {
+
+            window.location.href =
+                "Admin.html";
+
+        }, 800);
+
 
     } catch (error) {
 
-        alert("Invalid email or password.");
+        console.error(
+            "Login Error:",
+            error
+        );
 
-        console.error(error);
+
+        let errorMessage =
+            "Login failed. Please try again.";
+
+
+        if (
+            error.code ===
+            "auth/invalid-credential"
+        ) {
+
+            errorMessage =
+                "Invalid email or password.";
+
+        }
+
+        else if (
+            error.code ===
+            "auth/user-not-found"
+        ) {
+
+            errorMessage =
+                "No admin account found with this email.";
+
+        }
+
+        else if (
+            error.code ===
+            "auth/wrong-password"
+        ) {
+
+            errorMessage =
+                "Incorrect password.";
+
+        }
+
+        else if (
+            error.code ===
+            "auth/invalid-email"
+        ) {
+
+            errorMessage =
+                "Please enter a valid email address.";
+
+        }
+
+
+        showMessage(
+            errorMessage,
+            "error"
+        );
+
+
+        loginButton.disabled = false;
+
+        loginButton.textContent =
+            "Login";
 
     }
 
 });
+
+
+// ============================================
+// SHOW LOGIN MESSAGE
+// ============================================
+
+function showMessage(
+    message,
+    type
+) {
+
+    loginMessage.textContent =
+        message;
+
+    loginMessage.className =
+        "login-message " + type;
+
+}
