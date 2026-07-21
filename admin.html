@@ -1,47 +1,47 @@
-!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
 
-<html lang="en">  <head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  
-<title>Leisure Fan Tours - Review Admin</title>  
-<form id="loginForm">  
-</form>  
-<link rel="stylesheet" href="admin.css">  
-<!-- Firebase v8 -->  
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>  
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>  
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>  <script>  
-// Firebase Configuration  
-const firebaseConfig = {  
-    apiKey: "YOUR_API_KEY",  
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",  
-    projectId: "YOUR_PROJECT_ID",  
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",  
-    messagingSenderId: "YOUR_SENDER_ID",  
-    appId: "YOUR_APP_ID"  
-};  
-  
-firebase.initializeApp(firebaseConfig);  
-  
-const auth = firebase.auth();  
-const db = firebase.firestore();  
-  
-// Protect the admin page  
-auth.onAuthStateChanged((user) => {  
-    if (!user) {  
-        // User is not logged in  
-        window.location.href = "login.html";  
-    }  
-});  
-</script>  </head>  
-auth.onAuthStateChanged((user) => {  
-    if (user) {  
-        // User is logged in  
-    } else {  
-        window.location.href = "login.html";  
-    }  
-});  
-<body>  
-<h1>Review Management Dashboard</h1>  <p>Approve customer reviews before they appear on the website.</p>  <button id="logoutBtn">Logout</button>
+<head>
 
-<div id="reviewsList"></div>  <script type="module" src="admin.js"></script>  </body>  </html>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Leisure Fan Tours and Safaris - Review Admin
+    </title>
+
+    <link rel="stylesheet" href="admin.css">
+
+</head>
+
+
+<body>
+
+    <h1>
+        Review Management Dashboard
+    </h1>
+
+    <p>
+        Approve customer reviews before they appear on the website.
+    </p>
+
+    <button id="logoutBtn">
+        Logout
+    </button>
+
+
+    <div id="reviewsList">
+        <p>Loading reviews...</p>
+    </div>
+
+
+    <!-- Load Admin JavaScript -->
+
+    <script type="module" src="admin.js"></script>
+
+
+</body>
+
+</html>  </html>
