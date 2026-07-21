@@ -1,0 +1,503 @@
+// ==========================================
+// FIREBASE IMPORTS
+// ==========================================
+
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+// ==========================================
+// FIREBASE CONFIGURATION
+// ==========================================
+
+const firebaseConfig = {
+
+    // KEEP YOUR EXISTING FIREBASE CONFIG HERE
+
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.firebasestorage.app",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+
+};
+
+
+// ==========================================
+// INITIALIZE FIREBASE
+// ==========================================
+
+const app =
+    initializeApp(firebaseConfig);
+
+const auth =
+    getAuth(app);
+
+
+// ==========================================
+// GET HTML ELEMENTS
+// ==========================================
+
+const loginForm =
+    document.getElementById("loginForm");
+
+const loginSection =
+    document.getElementById("loginSection");
+
+const adminDashboard =
+    document.getElementById("adminDashboard");
+
+const loginMessage =
+    document.getElementById("loginMessage");
+
+const loginButton =
+    document.getElementById("loginButton");
+
+const logoutButton =
+    document.getElementById("logoutButton");
+
+const togglePassword =
+    document.getElementById("togglePassword");
+
+
+// ==========================================
+// SHOW / HIDE PASSWORD
+// ==========================================
+
+if (togglePassword) {
+
+    togglePassword.addEventListener(
+        "click",
+        () => {
+
+            const passwordInput =
+                document.getElementById("password");
+
+            if (!passwordInput) {
+                return;
+            }
+
+            if (
+                passwordInput.type ===
+                "password"
+            ) {
+
+                passwordInput.type =
+                    "text";
+
+                togglePassword.textContent =
+                    "Hide";
+
+            } else {
+
+                passwordInput.type =
+                    "password";
+
+                togglePassword.textContent =
+                    "Show";
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// ADMIN LOGIN
+// ==========================================
+
+if (loginForm) {
+
+    loginForm.addEventListener(
+        "submit",
+        async (event) => {
+
+            // STOP FORM FROM REFRESHING PAGE
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            // GET EMAIL
+
+            const emailInput =
+                document.getElementById("email");
+
+
+            // GET PASSWORD
+
+            const passwordInput =
+                document.getElementById("password");
+
+
+            // CHECK ELEMENTS
+
+            if (
+                !emailInput ||
+                !passwordInput
+            ) {
+
+                console.error(
+                    "Email or password input not found."
+                );
+
+                return;
+            }
+
+
+            // GET VALUES
+
+            const email =
+                emailInput.value.trim();
+
+            const password =
+                passwordInput.value;
+
+
+            // CHECK EMPTY FIELDS
+
+            if (
+                email === "" ||
+                password === ""
+            ) {
+
+                if (loginMessage) {
+
+                    loginMessage.textContent =
+                        "Please enter your email and password.";
+
+                    loginMessage.style.color =
+                        "red";
+
+                }
+
+                return;
+            }
+
+
+            // SHOW VERIFYING MESSAGE
+
+            if (loginMessage) {
+
+                loginMessage.textContent =
+                    "Verifying administrator login...";
+
+                loginMessage.style.color =
+                    "blue";
+
+            }
+
+
+            // DISABLE LOGIN BUTTON
+
+            if (loginButton) {
+
+                loginButton.disabled =
+                    true;
+
+                loginButton.textContent =
+                    "Verifying...";
+
+            }
+
+
+            try {
+
+                console.log(
+                    "Attempting login for:",
+                    email
+                );
+
+
+                // FIREBASE LOGIN
+
+                const userCredential =
+                    await signInWithEmailAndPassword(
+                        auth,
+                        email,
+                        password
+                    );
+
+
+                // GET USER
+
+                const user =
+                    userCredential.user;
+
+
+                console.log(
+                    "LOGIN SUCCESSFUL"
+                );
+
+                console.log(
+                    "Administrator:",
+                    user.email
+                );
+
+
+                // SHOW SUCCESS MESSAGE
+
+                if (loginMessage) {
+
+                    loginMessage.textContent =
+                        "Login successful. Opening dashboard...";
+
+                    loginMessage.style.color =
+                        "green";
+
+                }
+
+
+                // AUTH STATE LISTENER
+                // WILL SHOW DASHBOARD
+
+
+            } catch (error) {
+
+                console.error(
+                    "FIREBASE LOGIN ERROR:",
+                    error
+                );
+
+
+                if (loginMessage) {
+
+                    loginMessage.style.color =
+                        "red";
+
+
+                    if (
+                        error.code ===
+                        "auth/invalid-credential"
+                    ) {
+
+                        loginMessage.textContent =
+                            "Incorrect email or password.";
+
+                    }
+
+                    else if (
+                        error.code ===
+                        "auth/user-not-found"
+                    ) {
+
+                        loginMessage.textContent =
+                            "No administrator account exists with this email.";
+
+                    }
+
+                    else if (
+                        error.code ===
+                        "auth/wrong-password"
+                    ) {
+
+                        loginMessage.textContent =
+                            "Incorrect password.";
+
+                    }
+
+                    else if (
+                        error.code ===
+                        "auth/invalid-email"
+                    ) {
+
+                        loginMessage.textContent =
+                            "Please enter a valid email address.";
+
+                    }
+
+                    else if (
+                        error.code ===
+                        "auth/too-many-requests"
+                    ) {
+
+                        loginMessage.textContent =
+                            "Too many login attempts. Please try again later.";
+
+                    }
+
+                    else {
+
+                        loginMessage.textContent =
+                            "Login failed: " +
+                            error.message;
+
+                    }
+
+                }
+
+            }
+
+            finally {
+
+                // ENABLE BUTTON AGAIN
+
+                if (loginButton) {
+
+                    loginButton.disabled =
+                        false;
+
+                    loginButton.textContent =
+                        "Login";
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// CHECK LOGIN STATUS
+// ==========================================
+
+onAuthStateChanged(
+    auth,
+    (user) => {
+
+        console.log(
+            "Checking authentication status..."
+        );
+
+
+        if (user) {
+
+            console.log(
+                "Administrator logged in:",
+                user.email
+            );
+
+
+            // HIDE LOGIN
+
+            if (loginSection) {
+
+                loginSection.style.display =
+                    "none";
+
+            }
+
+
+            // SHOW DASHBOARD
+
+            if (adminDashboard) {
+
+                adminDashboard.style.display =
+                    "block";
+
+            }
+
+
+            // LOAD REVIEWS
+
+            if (
+                typeof loadReviews ===
+                "function"
+            ) {
+
+                loadReviews();
+
+            }
+
+
+        } else {
+
+            console.log(
+                "No administrator logged in."
+            );
+
+
+            // SHOW LOGIN
+
+            if (loginSection) {
+
+                loginSection.style.display =
+                    "flex";
+
+            }
+
+
+            // HIDE DASHBOARD
+
+            if (adminDashboard) {
+
+                adminDashboard.style.display =
+                    "none";
+
+            }
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+if (logoutButton) {
+
+    logoutButton.addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                await signOut(auth);
+
+                console.log(
+                    "Administrator successfully logged out."
+                );
+
+
+                if (loginMessage) {
+
+                    loginMessage.textContent =
+                        "You have been logged out successfully.";
+
+                    loginMessage.style.color =
+                        "green";
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Logout error:",
+                    error
+                );
+
+
+                if (loginMessage) {
+
+                    loginMessage.textContent =
+                        "Logout failed.";
+
+                    loginMessage.style.color =
+                        "red";
+
+                }
+
+            }
+
+        }
+    );
+
+}
