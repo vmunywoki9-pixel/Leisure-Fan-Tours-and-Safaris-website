@@ -1,74 +1,95 @@
-// ============================================
-// LEISURE FAN TOURS AND SAFARIS
-// FIREBASE CONFIGURATION
-// ============================================
+import { db } from "./firebase.js";
 
-// Firebase App
 import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-// Firebase Authentication
-import {
-    getAuth
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-// Firebase Firestore
-import {
-    getFirestore
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// Review Form
+const reviewForm = document.getElementById("reviewForm");
 
-// ============================================
-// FIREBASE CONFIGURATION
-// ============================================
+if (reviewForm) {
 
-const firebaseConfig = {
+    reviewForm.addEventListener("submit", async (e) => {
 
-    apiKey: "AIzaSyBbar43VLO99kgMLiC90drSXiVADS-xyaw",
+        e.preventDefault();
 
-    authDomain: "leisure-fan-tours-and-safaris.firebaseapp.com",
+        const name = document.getElementById("reviewName").value.trim();
+        const country = document.getElementById("reviewCountry").value.trim();
+        const rating = Number(document.getElementById("reviewRating").value);
+        const review = document.getElementById("reviewMessage").value.trim();
 
-    projectId: "leisure-fan-tours-and-safaris",
+        if (!name || !country || !rating || !review) {
+            alert("Please complete all fields.");
+            return;
+        }
 
-    storageBucket: "leisure-fan-tours-and-safaris.firebasestorage.app",
+        try {
 
-    messagingSenderId: "199881242074",
+            await addDoc(collection(db, "reviews"), {
+                name: name,
+                country: country,
+                rating: rating,
+                review: review,
+                approved: false,
+                createdAt: serverTimestamp()
+            });
 
-    appId: "1:199881242074:web:887ced6c38c7de0712bce3",
+            alert("✅ Thank you! Your review has been submitted for approval.");
 
-    measurementId: "G-4ERCTKSFRY"
+            reviewForm.reset();
 
-};
+        } catch (error) {
 
+            console.error(error);
+            alert("❌ Failed to submit review.");
 
-// ============================================
-// INITIALIZE FIREBASE
-// ============================================
+        }
 
-const app = initializeApp(firebaseConfig);
+    });
 
+}
 
-// ============================================
-// INITIALIZE AUTHENTICATION
-// ============================================
+// Display approved reviews
+async function loadReviews() {
 
-const auth = getAuth(app);
+    const container = document.getElementById("firebaseReviews");
 
+    if (!container) return;
 
-// ============================================
-// INITIALIZE FIRESTORE
-// ============================================
+    container.innerHTML = "";
 
-const db = getFirestore(app);
+    const q = query(
+        collection(db, "reviews"),
+        where("approved", "==", true)
+    );
 
+    const snapshot = await getDocs(q);
 
-// ============================================
-// EXPORT
-// ============================================
+    if (snapshot.empty) {
+        container.innerHTML = "<p>No customer reviews yet.</p>";
+        return;
+    }
 
-export {
-    app,
-    auth,
-    db
-};
+    snapshot.forEach((doc) => {
+
+        const data = doc.data();
+
+        container.innerHTML += `
+            <div class="review-card">
+                <h3>${"⭐".repeat(data.rating)}</h3>
+                <p>${data.review}</p>
+                <h4>${data.name}</h4>
+                <small>${data.country}</small>
+            </div>
+        `;
+
+    });
+
+}
+
+loadReviews();
