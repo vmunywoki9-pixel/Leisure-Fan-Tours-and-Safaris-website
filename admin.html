@@ -1,83 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Leisure Fan Tours & Safaris | Review Management</title>
 
-<link rel="stylesheet" href="admin.css">
+    <meta charset="UTF-8">
 
-<script type="module">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    <title>
+        Admin Dashboard | Leisure Fan Tours and Safaris
+    </title>
 
-const firebaseConfig = {
-    apiKey: "AIzaSyBbar43VLO99kgMLiC90drSXiVADS-xyaw",
-    authDomain: "leisure-fan-tours-and-safaris.firebaseapp.com",
-    projectId: "leisure-fan-tours-and-safaris",
-    storageBucket: "leisure-fan-tours-and-safaris.firebasestorage.app",
-    messagingSenderId: "199881242074",
-    appId: "1:199881242074:web:887ced6c38c7de0712bce3"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-// Protect this page
-onAuthStateChanged(auth, (user) => {
-
-    if (!user) {
-
-        window.location.href = "login.html";
-
-    }
-
-});
-
-// Logout
-window.logout = function () {
-
-    signOut(auth)
-        .then(() => {
-
-            window.location.href = "login.html";
-
-        })
-        .catch((error) => {
-
-            alert(error.message);
-
-        });
-
-}
-
-</script>
+    <link
+        rel="stylesheet"
+        href="Admin.css"
+    >
 
 </head>
 
+
 <body>
 
-<h1>Review Management Dashboard</h1>
+    <!-- =====================================
+         ADMIN HEADER
+    ====================================== -->
 
-<p>Approve customer reviews before they appear on the website.</p>
+    <header class="admin-header">
 
-<button onclick="logout()">
-Logout
-</button>
+        <div>
 
-<div id="reviewsList"></div>
+            <h1>
+                Leisure Fan Tours and Safaris
+            </h1>
 
-<script type="module" src="admin.js"></script>
+            <p>
+                Administration Dashboard
+            </p>
+
+        </div>
 
 
-<div id="reviewsList"></div>
+        <button
+            id="logoutButton"
+            class="logout-button">
 
-<script type="module" src="admin.js"></script>
+            Logout
+
+        </button>
+
+    </header>
+
+
+    <!-- =====================================
+         MAIN CONTENT
+    ====================================== -->
+
+    <main class="admin-container">
+
+
+        <!-- ADMIN WELCOME -->
+
+        <section class="welcome-section">
+
+            <h2>
+                Welcome, Administrator
+            </h2>
+
+            <p>
+                Manage customer reviews and website content.
+            </p>
+
+        </section>
+
+
+        <!-- =================================
+             REVIEW STATISTICS
+        ================================== -->
+
+        <section class="stats-container">
+
+            <div class="stat-card">
+
+                <h3>
+                    Total Reviews
+                </h3>
+
+                <p id="totalReviews">
+                    0
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    Approved
+                </h3>
+
+                <p id="approvedReviews">
+                    0
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    Pending
+                </h3>
+
+                <p id="pendingReviews">
+                    0
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================
+             REVIEWS MANAGEMENT
+        ================================== -->
+
+        <section class="reviews-section">
+
+            <div class="section-header">
+
+                <h2>
+                    Customer Reviews
+                </h2>
+
+                <button
+                    id="refreshReviews"
+                    class="refresh-button">
+
+                    Refresh
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="adminMessage"
+                class="admin-message">
+            </div>
+
+
+            <div
+                id="adminReviewsContainer"
+                class="admin-reviews-container">
+
+                <div class="loading">
+
+                    Loading reviews...
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================
+         JAVASCRIPT
+    ====================================== -->
+
+    <script
+        type="module"
+        src="Admin.js">
+    </script>
+
 </body>
 
 </html>
