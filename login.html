@@ -34,9 +34,9 @@
         }
 
 
-        /* =================================
+        /* ================================
            LOGIN SECTION
-        ================================== */
+        ================================= */
 
         #loginSection {
 
@@ -101,13 +101,6 @@
             color: #666;
 
             margin-bottom: 20px;
-
-        }
-
-
-        #loginForm {
-
-            width: 100%;
 
         }
 
@@ -206,9 +199,9 @@
         }
 
 
-        /* =================================
+        /* ================================
            ADMIN DASHBOARD
-        ================================== */
+        ================================= */
 
         #adminDashboard {
 
@@ -228,8 +221,6 @@
             color: white;
 
             padding: 25px;
-
-            position: relative;
 
         }
 
@@ -274,9 +265,9 @@
         }
 
 
-        /* =================================
-           REVIEWS LIST
-        ================================== */
+        /* ================================
+           REVIEWS
+        ================================= */
 
         #reviewsList {
 
@@ -324,13 +315,6 @@
         }
 
 
-        .review-actions {
-
-            margin-top: 20px;
-
-        }
-
-
         .approve-btn {
 
             background: #2e7d32;
@@ -345,7 +329,18 @@
 
             cursor: pointer;
 
+            margin-top: 15px;
+
             margin-right: 10px;
+
+        }
+
+
+        .approve-btn:disabled {
+
+            background: #999;
+
+            cursor: not-allowed;
 
         }
 
@@ -367,7 +362,7 @@
         }
 
 
-        .approve-btn:hover {
+        .approve-btn:hover:not(:disabled) {
 
             background: #1b5e20;
 
@@ -381,18 +376,7 @@
         }
 
 
-        /* =================================
-           MOBILE
-        ================================== */
-
         @media (max-width: 600px) {
-
-            body {
-
-                padding: 0;
-
-            }
-
 
             .login-box {
 
@@ -419,3 +403,137 @@
     </style>
 
 </head>
+
+
+<body>
+
+
+    <!-- =================================
+         LOGIN
+    ================================== -->
+
+    <section id="loginSection">
+
+
+        <div class="login-box">
+
+
+            <img
+                src="logo.png"
+                alt="Leisure Fan Tours and Safaris Logo"
+            >
+
+
+            <h2>
+                Administrator Login
+            </h2>
+
+
+            <p>
+                Leisure Fan Tours and Safaris
+            </p>
+
+
+            <form id="loginForm">
+
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Email Address"
+                    required
+                >
+
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                    required
+                >
+
+
+                <button
+                    type="submit"
+                    id="loginBtn"
+                >
+                    Login
+                </button>
+
+
+            </form>
+
+
+            <p id="loginMessage"></p>
+
+
+            <a
+                href="index.html"
+                class="back"
+            >
+                ← Back to Website
+            </a>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =================================
+         ADMIN DASHBOARD
+    ================================== -->
+
+    <section id="adminDashboard">
+
+
+        <header class="dashboard-header">
+
+
+            <h1>
+                Reviews Management Dashboard
+            </h1>
+
+
+            <p>
+                Approve customer reviews before
+                they appear on the website.
+            </p>
+
+
+            <button id="logoutBtn">
+                Logout
+            </button>
+
+
+        </header>
+
+
+        <main id="reviewsList">
+
+            <p>
+                Loading customer reviews...
+            </p>
+
+        </main>
+
+
+    </section>
+
+
+
+    <!-- =================================
+         JAVASCRIPT
+    ================================== -->
+
+    <script
+        type="module"
+        src="login.js"
+    ></script>
+
+
+</body>
+
+</html>
