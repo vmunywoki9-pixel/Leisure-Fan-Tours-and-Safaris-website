@@ -2,12 +2,21 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Leisure Fan Tours and Safaris | Admin</title>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Leisure Fan Tours and Safaris | Admin
+    </title>
+
 
     <style>
+
         * {
             margin: 0;
             padding: 0;
@@ -15,119 +24,398 @@
             font-family: Arial, sans-serif;
         }
 
+
         body {
+
             background: #f5f5f5;
-            padding: 30px;
+
             min-height: 100vh;
+
         }
 
-        /* LOGIN */
 
+        /* =================================
+           LOGIN SECTION
+        ================================== */
 
-    <!-- LOGIN SECTION -->
+        #loginSection {
 
-    <div id="loginSection">
+            min-height: 100vh;
 
-        <div class="login-box">
+            display: flex;
 
-            <img src="logo.png" alt="Leisure Fan Tours Logo">
+            justify-content: center;
 
-            <h2>Administrator Login</h2>
+            align-items: center;
 
-            <p>Leisure Fan Tours and Safaris</p>
+            padding: 20px;
 
-            <form id="loginForm">
-
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Email Address"
-                    required
-                >
-
-                <input
-                    type="password"
-                    id="password"
-                    placeholder="Password"
-                    required
-                >
-
-                <button type="submit" id="loginBtn">
-                    Login
-                </button>
-
-            </form>
-
-            <p id="loginMessage"></p>
-
-            <a href="index.html" class="back">
-                ← Back to Website
-            </a>
-
-        </div>
-
-    </div>
-
-
-    <!-- ADMIN DASHBOARD -->
-
-    <div id="adminDashboard">
-
-        <div class="dashboard-header">
-
-            <h1>Review Management Dashboard</h1>
-
-            <p>
-                Approve customer reviews before they appear on the website.
-            </p>
-
-            <button id="logoutBtn">
-                Logout
-            </button>
-
-        </div>
-
-        <div id="reviewsList">
-
-            <p>Loading reviews...</p>
-
-        </div>
-
-    </div>
-
-
-    <!-- Firebase and Dashboard JavaScript -->
-
-    <script type="module" src="login.js"></script>
-f (loginForm) {
-    loginForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-
-        try {
-            loginMessage.textContent = "Verifying login...";
-
-            await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
-
-            loginMessage.textContent = "Login successful!";
-
-            loginSection.style.display = "none";
-            adminDashboard.style.display = "block";
-
-        } catch (error) {
-            console.error(error);
-
-            loginMessage.textContent =
-                "Login failed: " + error.message;
         }
-    });
-}
-</body>
 
-</html>
+
+        .login-box {
+
+            width: 100%;
+
+            max-width: 420px;
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 10px 30px
+                rgba(0, 0, 0, 0.15);
+
+            text-align: center;
+
+        }
+
+
+        .login-box img {
+
+            width: 100px;
+
+            height: 100px;
+
+            object-fit: contain;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .login-box h2 {
+
+            color: #1b5e20;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .login-box p {
+
+            color: #666;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        #loginForm {
+
+            width: 100%;
+
+        }
+
+
+        #loginForm input {
+
+            width: 100%;
+
+            padding: 14px;
+
+            margin-bottom: 15px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+
+            outline: none;
+
+        }
+
+
+        #loginForm input:focus {
+
+            border-color: #1b5e20;
+
+        }
+
+
+        #loginBtn {
+
+            width: 100%;
+
+            padding: 14px;
+
+            background: #1b5e20;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
+        }
+
+
+        #loginBtn:hover {
+
+            background: #2e7d32;
+
+        }
+
+
+        #loginBtn:disabled {
+
+            background: #999;
+
+            cursor: not-allowed;
+
+        }
+
+
+        #loginMessage {
+
+            margin-top: 15px;
+
+            min-height: 20px;
+
+            font-weight: bold;
+
+        }
+
+
+        .back {
+
+            display: inline-block;
+
+            margin-top: 20px;
+
+            color: #1b5e20;
+
+            text-decoration: none;
+
+        }
+
+
+        .back:hover {
+
+            text-decoration: underline;
+
+        }
+
+
+        /* =================================
+           ADMIN DASHBOARD
+        ================================== */
+
+        #adminDashboard {
+
+            display: none;
+
+            min-height: 100vh;
+
+            background: #f5f5f5;
+
+        }
+
+
+        .dashboard-header {
+
+            background: #1b5e20;
+
+            color: white;
+
+            padding: 25px;
+
+            position: relative;
+
+        }
+
+
+        .dashboard-header h1 {
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .dashboard-header p {
+
+            margin-bottom: 20px;
+
+        }
+
+
+        #logoutBtn {
+
+            background: #c62828;
+
+            color: white;
+
+            border: none;
+
+            padding: 10px 20px;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            font-size: 15px;
+
+        }
+
+
+        #logoutBtn:hover {
+
+            background: #b71c1c;
+
+        }
+
+
+        /* =================================
+           REVIEWS LIST
+        ================================== */
+
+        #reviewsList {
+
+            max-width: 1000px;
+
+            margin: 30px auto;
+
+            padding: 20px;
+
+        }
+
+
+        .review-card {
+
+            background: white;
+
+            padding: 25px;
+
+            margin-bottom: 20px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 5px 15px
+                rgba(0, 0, 0, 0.08);
+
+        }
+
+
+        .review-card h3 {
+
+            color: #1b5e20;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .review-card p {
+
+            margin-bottom: 8px;
+
+            color: #444;
+
+        }
+
+
+        .review-actions {
+
+            margin-top: 20px;
+
+        }
+
+
+        .approve-btn {
+
+            background: #2e7d32;
+
+            color: white;
+
+            border: none;
+
+            padding: 10px 15px;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+
+            margin-right: 10px;
+
+        }
+
+
+        .delete-btn {
+
+            background: #c62828;
+
+            color: white;
+
+            border: none;
+
+            padding: 10px 15px;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+
+        }
+
+
+        .approve-btn:hover {
+
+            background: #1b5e20;
+
+        }
+
+
+        .delete-btn:hover {
+
+            background: #b71c1c;
+
+        }
+
+
+        /* =================================
+           MOBILE
+        ================================== */
+
+        @media (max-width: 600px) {
+
+            body {
+
+                padding: 0;
+
+            }
+
+
+            .login-box {
+
+                padding: 25px;
+
+            }
+
+
+            .dashboard-header {
+
+                text-align: center;
+
+            }
+
+
+            #reviewsList {
+
+                padding: 15px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
