@@ -99,7 +99,35 @@
     <!-- Firebase and Dashboard JavaScript -->
 
     <script type="module" src="login.js"></script>
+f (loginForm) {
+    loginForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        try {
+            loginMessage.textContent = "Verifying login...";
+
+            await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+            loginMessage.textContent = "Login successful!";
+
+            loginSection.style.display = "none";
+            adminDashboard.style.display = "block";
+
+        } catch (error) {
+            console.error(error);
+
+            loginMessage.textContent =
+                "Login failed: " + error.message;
+        }
+    });
+}
 </body>
 
 </html>
