@@ -355,6 +355,42 @@ You can pay your booking deposit or full safari amount online.
 <div id="paypal-container-ZC4PHKNXGEFRY"></div>
 
 </section>
+<section id="mpesa-payment" class="payment">
+    <h2>Pay via M-PESA</h2>
+
+    <p>
+        Pay securely for your safari booking using our M-PESA Till Number.
+    </p>
+
+    <p>
+        <strong>M-PESA Till Number:</strong> 4383215
+    </p>
+
+    <button onclick="showMpesaInstructions()">
+        Pay via M-PESA
+    </button>
+
+    <div id="mpesaInstructions" style="display:none;">
+        <h3>How to Pay</h3>
+
+        <ol>
+            <li>Open M-PESA on your phone.</li>
+            <li>Select <strong>Lipa na M-PESA</strong>.</li>
+            <li>Select <strong>Buy Goods and Services</strong>.</li>
+            <li>Enter our Till Number.</li>
+            <li>Enter the amount and confirm payment.</li>
+        </ol>
+
+        <p>
+            After payment, send the M-PESA confirmation message to us
+            on WhatsApp.
+        </p>
+
+        <a href="https://wa.me/254740677858">
+            Send Payment Confirmation on WhatsApp
+        </a>
+    </div>
+</section>
 
 <!-- ================= CONTACT ================= -->
 
@@ -500,5 +536,14 @@ function selectPackage(packageName) {
     document.getElementById("package").value = packageName;
 }
 </script>
+function showMpesaInstructions() {
+    const instructions = document.getElementById("mpesaInstructions");
+
+    if (instructions.style.display === "none") {
+        instructions.style.display = "block";
+    } else {
+        instructions.style.display = "none";
+    }
+}
 </body>
 </html>
