@@ -1,47 +1,152 @@
-// Mobile menu toggle functionality
-const hamburger = document.querySelector('.hamburger');
-const navLinks = document.querySelector('.nav-links');
+// ==========================================
+// LEISURE FAN TOURS AND SAFARIS
+// script.js
+// ==========================================
 
-if (hamburger) {
-    hamburger.addEventListener('click', () => {
-        navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-        if (navLinks.style.display === 'flex') {
-            navLinks.style.flexDirection = 'column';
-            navLinks.style.position = 'absolute';
-            navLinks.style.top = '70px';
-            navLinks.style.left = '0';
-            navLinks.style.width = '100%';
-            navLinks.style.backgroundColor = 'rgba(26, 26, 26, 0.95)';
-            navLinks.style.padding = '20px';
-            navLinks.style.textAlign = 'center';
-        }
-    });
-}
+// Mobile Navigation
+const menuBtn = document.querySelector(".menu-btn");
+const navLinks = document.querySelector(".nav-links");
 
-// Quote Form Submission Handler
-const quoteForm = document.getElementById('quoteForm');
-if (quoteForm) {
-    quoteForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        alert('Thank you! Your quote request has been submitted successfully.');
-        quoteForm.reset();
-    });
-}
+menuBtn.addEventListener("click", () => {
+navLinks.classList.toggle("active");
+});
 
-// Smooth scrolling for navigation links
+// Close menu after clicking a link
+document.querySelectorAll(".nav-links a").forEach(link => {
+link.addEventListener("click", () => {
+navLinks.classList.remove("active");
+});
+});
+
+// ==========================================
+// Animated Statistics Counter
+// ==========================================
+
+const counters = document.querySelectorAll(".counter");
+
+counters.forEach(counter => {
+counter.innerText = "0";
+
+const updateCounter = () => {  
+    const target = +counter.getAttribute("data-target");  
+    const count = +counter.innerText;  
+    const increment = Math.ceil(target / 100);  
+
+    if (count < target) {  
+        counter.innerText = count + increment;  
+        setTimeout(updateCounter, 20);  
+    } else {  
+        counter.innerText = target + "+";  
+    }  
+};  
+
+updateCounter();
+
+});
+
+// ==========================================
+// Back To Top Button
+// ==========================================
+
+const topBtn = document.getElementById("topBtn");
+
+window.addEventListener("scroll", () => {
+topBtn.style.display = window.scrollY > 400 ? "block" : "none";
+});
+
+topBtn.addEventListener("click", () => {
+window.scrollTo({
+top: 0,
+behavior: "smooth"
+});
+});
+
+// ==========================================
+// Smooth Scrolling
+// ==========================================
+
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-            // Close mobile menu if open
-            if (window.innerWidth <= 768) {
-                navLinks.style.display = 'none';
-            }
-        }
-    });
+anchor.addEventListener("click", function (e) {
+e.preventDefault();
+
+document.querySelector(this.getAttribute("href")).scrollIntoView({  
+        behavior: "smooth"  
+    });  
+});
+
+});
+
+// ==========================================
+// Active Navigation
+// ==========================================
+
+const sections = document.querySelectorAll("section");
+const navItems = document.querySelectorAll(".nav-links a");
+
+window.addEventListener("scroll", () => {
+
+let current = "";  
+
+sections.forEach(section => {  
+    const sectionTop = section.offsetTop - 120;  
+
+    if (window.scrollY >= sectionTop) {  
+        current = section.getAttribute("id");  
+    }  
+});  
+
+navItems.forEach(link => {  
+    link.classList.remove("active");  
+
+    if (link.getAttribute("href") === "#" + current) {  
+        link.classList.add("active");  
+    }  
+});
+
+});
+
+// ==========================================
+// Reveal Elements on Scroll
+// ==========================================
+
+const revealElements = document.querySelectorAll(
+".card, .review, .price-card, .stat, .gallery-container img"
+);
+
+function reveal() {
+const windowHeight = window.innerHeight;
+
+revealElements.forEach(el => {  
+    const revealTop = el.getBoundingClientRect().top;  
+
+    if (revealTop < windowHeight - 100) {  
+        el.style.opacity = "1";  
+        el.style.transform = "translateY(0)";  
+    }  
+});
+
+}
+
+reveal();
+
+window.addEventListener("scroll", reveal);
+
+// ==========================================
+// Hero Fade Effect
+// ==========================================
+
+const hero = document.querySelector(".hero");
+
+if (hero) {
+window.addEventListener("scroll", () => {
+hero.style.opacity = 1 - window.scrollY / 900;
+});
+}
+
+// ==========================================
+// Welcome Message
+// ==========================================
+
+window.addEventListener("load", () => {
+console.log("Welcome to Leisure Fan Tours and Safaris");
 });
