@@ -1,152 +1,468 @@
-// ==========================================
-// LEISURE FAN TOURS AND SAFARIS
-// script.js
-// ==========================================
+/* =========================================================
+   LEISURE FAN TOURS AND SAFARIS
+   SCRIPT.JS
+========================================================= */
 
-// Mobile Navigation
-const menuBtn = document.querySelector(".menu-btn");
-const navLinks = document.querySelector(".nav-links");
+document.addEventListener("DOMContentLoaded", function () {
 
-menuBtn.addEventListener("click", () => {
-navLinks.classList.toggle("active");
-});
+    /* =====================================================
+       MOBILE NAVIGATION
+    ===================================================== */
 
-// Close menu after clicking a link
-document.querySelectorAll(".nav-links a").forEach(link => {
-link.addEventListener("click", () => {
-navLinks.classList.remove("active");
-});
-});
+    const menuBtn = document.querySelector(".menu-btn");
+    const navLinks = document.querySelector(".nav-links");
 
-// ==========================================
-// Animated Statistics Counter
-// ==========================================
+    if (menuBtn && navLinks) {
 
-const counters = document.querySelectorAll(".counter");
+        menuBtn.addEventListener("click", function () {
 
-counters.forEach(counter => {
-counter.innerText = "0";
+            navLinks.classList.toggle("active");
 
-const updateCounter = () => {  
-    const target = +counter.getAttribute("data-target");  
-    const count = +counter.innerText;  
-    const increment = Math.ceil(target / 100);  
+            const icon = menuBtn.querySelector("i");
 
-    if (count < target) {  
-        counter.innerText = count + increment;  
-        setTimeout(updateCounter, 20);  
-    } else {  
-        counter.innerText = target + "+";  
-    }  
-};  
+            if (navLinks.classList.contains("active")) {
 
-updateCounter();
+                if (icon) {
+                    icon.classList.remove("fa-bars");
+                    icon.classList.add("fa-times");
+                }
 
-});
+            } else {
 
-// ==========================================
-// Back To Top Button
-// ==========================================
+                if (icon) {
+                    icon.classList.remove("fa-times");
+                    icon.classList.add("fa-bars");
+                }
 
-const topBtn = document.getElementById("topBtn");
+            }
 
-window.addEventListener("scroll", () => {
-topBtn.style.display = window.scrollY > 400 ? "block" : "none";
-});
+        });
 
-topBtn.addEventListener("click", () => {
-window.scrollTo({
-top: 0,
-behavior: "smooth"
-});
-});
 
-// ==========================================
-// Smooth Scrolling
-// ==========================================
+        /* Close mobile menu after clicking a link */
 
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-anchor.addEventListener("click", function (e) {
-e.preventDefault();
+        document.querySelectorAll(".nav-links a").forEach(function (link) {
 
-document.querySelector(this.getAttribute("href")).scrollIntoView({  
-        behavior: "smooth"  
-    });  
-});
+            link.addEventListener("click", function () {
 
-});
+                navLinks.classList.remove("active");
 
-// ==========================================
-// Active Navigation
-// ==========================================
+                const icon = menuBtn.querySelector("i");
 
-const sections = document.querySelectorAll("section");
-const navItems = document.querySelectorAll(".nav-links a");
+                if (icon) {
 
-window.addEventListener("scroll", () => {
+                    icon.classList.remove("fa-times");
 
-let current = "";  
+                    icon.classList.add("fa-bars");
 
-sections.forEach(section => {  
-    const sectionTop = section.offsetTop - 120;  
+                }
 
-    if (window.scrollY >= sectionTop) {  
-        current = section.getAttribute("id");  
-    }  
-});  
+            });
 
-navItems.forEach(link => {  
-    link.classList.remove("active");  
+        });
 
-    if (link.getAttribute("href") === "#" + current) {  
-        link.classList.add("active");  
-    }  
-});
+    }
 
-});
 
-// ==========================================
-// Reveal Elements on Scroll
-// ==========================================
+    /* =====================================================
+       SMOOTH SCROLLING
+    ===================================================== */
 
-const revealElements = document.querySelectorAll(
-".card, .review, .price-card, .stat, .gallery-container img"
-);
+    document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
 
-function reveal() {
-const windowHeight = window.innerHeight;
+        anchor.addEventListener("click", function (event) {
 
-revealElements.forEach(el => {  
-    const revealTop = el.getBoundingClientRect().top;  
+            const targetId = this.getAttribute("href");
 
-    if (revealTop < windowHeight - 100) {  
-        el.style.opacity = "1";  
-        el.style.transform = "translateY(0)";  
-    }  
-});
+            if (!targetId || targetId === "#") {
+                return;
+            }
 
-}
+            const target = document.querySelector(targetId);
 
-reveal();
+            if (target) {
 
-window.addEventListener("scroll", reveal);
+                event.preventDefault();
 
-// ==========================================
-// Hero Fade Effect
-// ==========================================
+                target.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
 
-const hero = document.querySelector(".hero");
+            }
 
-if (hero) {
-window.addEventListener("scroll", () => {
-hero.style.opacity = 1 - window.scrollY / 900;
-});
-}
+        });
 
-// ==========================================
-// Welcome Message
-// ==========================================
+    });
 
-window.addEventListener("load", () => {
-console.log("Welcome to Leisure Fan Tours and Safaris");
+
+    /* =====================================================
+       ACTIVE NAVIGATION
+    ===================================================== */
+
+    const sections = document.querySelectorAll("section[id]");
+
+    const navItems = document.querySelectorAll(".nav-links a");
+
+    function updateActiveNavigation() {
+
+        let currentSection = "";
+
+        sections.forEach(function (section) {
+
+            const sectionTop =
+                section.offsetTop - 150;
+
+            const sectionHeight =
+                section.offsetHeight;
+
+            if (
+                window.scrollY >= sectionTop &&
+                window.scrollY < sectionTop + sectionHeight
+            ) {
+
+                currentSection =
+                    section.getAttribute("id");
+
+            }
+
+        });
+
+
+        navItems.forEach(function (link) {
+
+            link.classList.remove("active");
+
+            const linkTarget =
+                link.getAttribute("href");
+
+            if (
+                linkTarget === "#" + currentSection
+            ) {
+
+                link.classList.add("active");
+
+            }
+
+        });
+
+    }
+
+    window.addEventListener(
+        "scroll",
+        updateActiveNavigation
+    );
+
+    updateActiveNavigation();
+
+
+    /* =====================================================
+       BACK TO TOP BUTTON
+    ===================================================== */
+
+    const topBtn =
+        document.getElementById("topBtn");
+
+    if (topBtn) {
+
+        window.addEventListener(
+            "scroll",
+            function () {
+
+                if (window.scrollY > 500) {
+
+                    topBtn.style.display = "flex";
+
+                } else {
+
+                    topBtn.style.display = "none";
+
+                }
+
+            }
+        );
+
+
+        topBtn.addEventListener(
+            "click",
+            function () {
+
+                window.scrollTo({
+
+                    top: 0,
+
+                    behavior: "smooth"
+
+                });
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       SCROLL REVEAL ANIMATION
+    ===================================================== */
+
+    const revealElements =
+        document.querySelectorAll(
+            ".about-image, " +
+            ".unique-image, " +
+            ".experience-card, " +
+            ".destination-card, " +
+            ".gallery-grid img, " +
+            ".review, " +
+            ".feature"
+        );
+
+
+    const revealObserver =
+        new IntersectionObserver(
+
+            function (entries) {
+
+                entries.forEach(
+                    function (entry) {
+
+                        if (
+                            entry.isIntersecting
+                        ) {
+
+                            entry.target.classList.add(
+                                "show"
+                            );
+
+                            revealObserver.unobserve(
+                                entry.target
+                            );
+
+                        }
+
+                    }
+                );
+
+            },
+
+            {
+                threshold: 0.15
+            }
+
+        );
+
+
+    revealElements.forEach(
+        function (element) {
+
+            element.classList.add(
+                "reveal"
+            );
+
+            revealObserver.observe(
+                element
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       HERO PARALLAX EFFECT
+    ===================================================== */
+
+    const hero =
+        document.querySelector(".hero");
+
+
+    if (hero) {
+
+        window.addEventListener(
+            "scroll",
+            function () {
+
+                const scrollPosition =
+                    window.scrollY;
+
+                if (
+                    scrollPosition < window.innerHeight
+                ) {
+
+                    hero.style.backgroundPosition =
+                        "center " +
+                        (scrollPosition * 0.35) +
+                        "px";
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       QUOTE FORM
+    ===================================================== */
+
+    const quoteForm =
+        document.querySelector(".quote-form");
+
+
+    if (quoteForm) {
+
+        quoteForm.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+
+                const destination =
+                    document.getElementById(
+                        "destination"
+                    )?.value || "";
+
+
+                const travelDate =
+                    document.getElementById(
+                        "travel-date"
+                    )?.value || "";
+
+
+                const travellers =
+                    document.getElementById(
+                        "travellers"
+                    )?.value || "";
+
+
+                const budget =
+                    document.getElementById(
+                        "budget"
+                    )?.value || "";
+
+
+                const accommodation =
+                    document.getElementById(
+                        "accommodation"
+                    )?.value || "";
+
+
+                const message =
+                    document.getElementById(
+                        "quote-message"
+                    )?.value || "";
+
+
+                const whatsappMessage =
+
+                    "Hello Leisure Fan Tours and Safaris.%0A%0A" +
+
+                    "I would like to request a free safari quote.%0A%0A" +
+
+                    "Destination: " +
+                    encodeURIComponent(destination) +
+
+                    "%0ATravel Date: " +
+                    encodeURIComponent(travelDate) +
+
+                    "%0ANumber of Travellers: " +
+                    encodeURIComponent(travellers) +
+
+                    "%0ABudget: " +
+                    encodeURIComponent(budget) +
+
+                    "%0AAccommodation: " +
+                    encodeURIComponent(accommodation) +
+
+                    "%0AAdditional Information: " +
+                    encodeURIComponent(message);
+
+
+                const whatsappURL =
+                    "https://wa.me/254740677858?text=" +
+                    whatsappMessage;
+
+
+                window.open(
+                    whatsappURL,
+                    "_blank"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       IMAGE LAZY LOADING
+    ===================================================== */
+
+    const images =
+        document.querySelectorAll(
+            "img"
+        );
+
+
+    images.forEach(
+        function (image) {
+
+            image.setAttribute(
+                "loading",
+                "lazy"
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       IMAGE ERROR DETECTION
+    ===================================================== */
+
+    images.forEach(
+        function (image) {
+
+            image.addEventListener(
+                "error",
+                function () {
+
+                    console.warn(
+                        "Image not found: " +
+                        image.src
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       YEAR AUTOMATICALLY UPDATES
+    ===================================================== */
+
+    const yearElement =
+        document.getElementById(
+            "currentYear"
+        );
+
+
+    if (yearElement) {
+
+        yearElement.textContent =
+            new Date().getFullYear();
+
+    }
+
+
+    /* =====================================================
+       WELCOME MESSAGE
+    ===================================================== */
+
+    console.log(
+        "Leisure Fan Tours and Safaris website loaded successfully."
+    );
+
 });
