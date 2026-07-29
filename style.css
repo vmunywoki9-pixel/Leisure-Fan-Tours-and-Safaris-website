@@ -4619,9 +4619,6 @@ Itineraries
 Destinations
 
 </a>
-<a href="itineraries.html">
-Itineraries
-</a>
 
 <a href="index.html#quote">
 
@@ -5088,4 +5085,30 @@ aria-label="Chat with us on WhatsApp">
 
     }
 
+}
+/* =====================================================
+   ITINERARIES CTA BUTTON
+===================================================== */
+
+.itineraries-cta {
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.itineraries-cta-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.itineraries-cta-content h2 {
+    margin-bottom: 20px;
+}
+
+.itineraries-cta-content p {
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+.itineraries-cta .gold-button {
+    display: inline-block;
 }
