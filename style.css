@@ -335,7 +335,22 @@ header {
     transform: translateY(-3px);
 
 }
+.itineraries-hero {
 
+    background-image:
+    linear-gradient(
+        rgba(0, 0, 0, 0.45),
+        rgba(0, 0, 0, 0.55)
+    ),
+    url("amboseli-serengeti.jpg");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+}
 
 /* =========================================================
    5. COMMON SECTION
@@ -5114,7 +5129,10 @@ aria-label="Chat with us on WhatsApp">
 }
 /* Itineraries Page Hero */
 
-.hero {
+/* ITINERARIES PAGE HERO ONLY */
+
+.itineraries-hero {
+
     background-image:
     linear-gradient(
         rgba(0, 0, 0, 0.45),
@@ -5123,6 +5141,9 @@ aria-label="Chat with us on WhatsApp">
     url("amboseli-serengeti.jpg");
 
     background-size: cover;
+
     background-position: center;
+
     background-repeat: no-repeat;
+
 }
