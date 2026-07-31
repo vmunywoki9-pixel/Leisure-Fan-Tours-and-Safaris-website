@@ -5252,3 +5252,41 @@ body {
 .goog-te-gadget .goog-te-combo {
     color: #333 !important;
 }
+/* ========================================
+   HIDE GOOGLE TRANSLATE TOP BAR
+======================================== */
+
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+}
+
+body {
+    top: 0 !important;
+    position: static !important;
+}
+
+/* Hide Google Translate floating elements */
+
+.goog-te-balloon-frame {
+    display: none !important;
+}
+
+/* Hide Google Translate branding */
+
+.goog-te-gadget > span {
+    display: none !important;
+}
+
+.goog-te-gadget {
+    font-size: 0 !important;
+}
+
+/* Keep language dropdown text visible */
+
+.goog-te-gadget .goog-te-combo {
+    font-size: 14px !important;
+    color: #333 !important;
+}
