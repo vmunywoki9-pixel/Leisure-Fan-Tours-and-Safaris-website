@@ -5245,3 +5245,10 @@ body {
     padding: 6px 10px !important;
     background: transparent !important;
 }
+.goog-te-gadget {
+    color: transparent !important;
+}
+
+.goog-te-gadget .goog-te-combo {
+    color: #333 !important;
+}
