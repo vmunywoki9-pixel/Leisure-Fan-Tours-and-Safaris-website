@@ -5220,3 +5220,28 @@ aria-label="Chat with us on WhatsApp">
     }
 
 }
+/* Hide Google Translate branding text */
+.goog-te-gadget > span {
+    display: none !important;
+}
+
+/* Hide Google Translate top banner */
+.goog-te-banner-frame {
+    display: none !important;
+}
+
+body {
+    top: 0 !important;
+}
+
+/* Hide Google Translate tooltip */
+.goog-tooltip {
+    display: none !important;
+}
+
+/* Keep the language dropdown visible */
+.goog-te-gadget-simple {
+    border: none !important;
+    padding: 6px 10px !important;
+    background: transparent !important;
+}
