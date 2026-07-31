@@ -5112,3 +5112,17 @@ aria-label="Chat with us on WhatsApp">
 .itineraries-cta .gold-button {
     display: inline-block;
 }
+/* Itineraries Page Hero */
+
+.hero {
+    background-image:
+    linear-gradient(
+        rgba(0, 0, 0, 0.45),
+        rgba(0, 0, 0, 0.55)
+    ),
+    url("amboseli-serengeti.jpg");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
