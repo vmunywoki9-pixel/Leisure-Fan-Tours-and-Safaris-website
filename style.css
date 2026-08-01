@@ -5290,3 +5290,25 @@ body {
     font-size: 14px !important;
     color: #333 !important;
 }
+/* Hide Google Translate top toolbar */
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+
+body {
+    top: 0 !important;
+}
+
+/* Hide the Google Translate tooltip */
+.goog-tooltip {
+    display: none !important;
+}
+
+.goog-tooltip:hover {
+    display: none !important;
+}
+
+/* Prevent Google Translate from adding extra spacing */
+.goog-te-gadget {
+    font-size: 0 !important;
+}
