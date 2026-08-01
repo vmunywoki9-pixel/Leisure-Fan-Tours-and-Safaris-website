@@ -5273,6 +5273,16 @@ body {
 .goog-te-balloon-frame {
     display: none !important;
 }
+function hideGoogleTranslateBar() {
+    const frame = document.querySelector('.goog-te-banner-frame');
+    if (frame) {
+        frame.style.display = 'none';
+    }
+
+    document.body.style.top = '0px';
+}
+
+setInterval(hideGoogleTranslateBar, 500);
 
 /* Hide Google Translate branding */
 
