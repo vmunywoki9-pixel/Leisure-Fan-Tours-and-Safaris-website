@@ -18,7 +18,28 @@
 html {
     scroll-behavior: smooth;
 }
+<script>
+function hideGoogleTranslateBar() {
+    // Hide Google Translate banner
+    document.querySelectorAll(
+        '.goog-te-banner-frame, iframe.goog-te-banner-frame'
+    ).forEach(function(element) {
+        element.style.display = 'none';
+        element.style.visibility = 'hidden';
+        element.style.height = '0';
+    });
 
+    // Reset page position
+    document.body.style.top = '0px';
+    document.documentElement.style.top = '0px';
+}
+
+// Run immediately
+hideGoogleTranslateBar();
+
+// Keep checking because Google Translate loads dynamically
+setInterval(hideGoogleTranslateBar, 100);
+</script>
 body {
     font-family: 'Poppins', sans-serif;
     background: #f7f3eb;
@@ -5321,4 +5342,36 @@ body {
 /* Prevent Google Translate from adding extra spacing */
 .goog-te-gadget {
     font-size: 0 !important;
+}
+/* Hide Google Translate top banner */
+body {
+    top: 0 !important;
+}
+
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+}
+
+iframe.goog-te-banner-frame {
+    display: none !important;
+}
+
+.skiptranslate {
+    top: 0 !important;
+}
+
+.goog-te-gadget {
+    font-size: 0 !important;
+}
+
+/* Hide Google Translate popups/tooltips */
+.goog-tooltip {
+    display: none !important;
+}
+
+.goog-te-balloon-frame {
+    display: none !important;
 }
