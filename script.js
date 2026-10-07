@@ -1,468 +1,133 @@
 /* =========================================================
-   LEISURE FAN TOURS AND SAFARIS
-   SCRIPT.JS
+   MOBILE MENU
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+const menuBtn = document.querySelector(".menu-btn");
 
-    /* =====================================================
-       MOBILE NAVIGATION
-    ===================================================== */
-
-    const menuBtn = document.querySelector(".menu-btn");
-    const navLinks = document.querySelector(".nav-links");
-
-    if (menuBtn && navLinks) {
-
-        menuBtn.addEventListener("click", function () {
-
-            navLinks.classList.toggle("active");
-
-            const icon = menuBtn.querySelector("i");
-
-            if (navLinks.classList.contains("active")) {
-
-                if (icon) {
-                    icon.classList.remove("fa-bars");
-                    icon.classList.add("fa-times");
-                }
-
-            } else {
-
-                if (icon) {
-                    icon.classList.remove("fa-times");
-                    icon.classList.add("fa-bars");
-                }
-
-            }
-
-        });
+const nav = document.querySelector(".main-nav");
 
 
-        /* Close mobile menu after clicking a link */
+if (menuBtn) {
 
-        document.querySelectorAll(".nav-links a").forEach(function (link) {
+    menuBtn.addEventListener("click", () => {
 
-            link.addEventListener("click", function () {
+        const open =
+            nav.classList.toggle("open");
 
-                navLinks.classList.remove("active");
+        menuBtn.setAttribute(
+            "aria-expanded",
+            open
+        );
 
-                const icon = menuBtn.querySelector("i");
+    });
 
-                if (icon) {
-
-                    icon.classList.remove("fa-times");
-
-                    icon.classList.add("fa-bars");
-
-                }
-
-            });
-
-        });
-
-    }
+}
 
 
-    /* =====================================================
-       SMOOTH SCROLLING
-    ===================================================== */
+document
+    .querySelectorAll(".main-nav a")
+    .forEach(link => {
 
-    document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+        link.addEventListener("click", () => {
 
-        anchor.addEventListener("click", function (event) {
-
-            const targetId = this.getAttribute("href");
-
-            if (!targetId || targetId === "#") {
-                return;
-            }
-
-            const target = document.querySelector(targetId);
-
-            if (target) {
-
-                event.preventDefault();
-
-                target.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-
-            }
+            nav.classList.remove("open");
 
         });
 
     });
 
 
-    /* =====================================================
-       ACTIVE NAVIGATION
-    ===================================================== */
 
-    const sections = document.querySelectorAll("section[id]");
+/* =========================================================
+   HERO SLIDESHOW
+========================================================= */
 
-    const navItems = document.querySelectorAll(".nav-links a");
+const slides =
+    [...document.querySelectorAll(".hero-slide")];
 
-    function updateActiveNavigation() {
+let currentSlide = 0;
 
-        let currentSection = "";
 
-        sections.forEach(function (section) {
+setInterval(() => {
 
-            const sectionTop =
-                section.offsetTop - 150;
+    if (!slides.length) {
+        return;
+    }
 
-            const sectionHeight =
-                section.offsetHeight;
+    slides[currentSlide]
+        .classList.remove("active");
 
-            if (
-                window.scrollY >= sectionTop &&
-                window.scrollY < sectionTop + sectionHeight
-            ) {
 
-                currentSection =
-                    section.getAttribute("id");
+    currentSlide =
+        (currentSlide + 1) %
+        slides.length;
 
-            }
+
+    slides[currentSlide]
+        .classList.add("active");
+
+}, 5000);
+
+
+
+/* =========================================================
+   GALLERY AUTO SLIDER
+========================================================= */
+
+const gallery =
+    document.getElementById("galleryTrack");
+
+
+if (gallery) {
+
+    let position = 0;
+
+
+    setInterval(() => {
+
+        const firstImage =
+            gallery.querySelector("img");
+
+
+        if (!firstImage) {
+            return;
+        }
+
+
+        const imageWidth =
+            firstImage.getBoundingClientRect().width;
+
+
+        const gap = 15;
+
+
+        const step =
+            imageWidth + gap;
+
+
+        position++;
+
+
+        if (
+            position >=
+            gallery.children.length
+        ) {
+
+            position = 0;
+
+        }
+
+
+        gallery.scrollTo({
+
+            left:
+                step * position,
+
+            behavior:
+                "smooth"
 
         });
 
+    }, 4500);
 
-        navItems.forEach(function (link) {
-
-            link.classList.remove("active");
-
-            const linkTarget =
-                link.getAttribute("href");
-
-            if (
-                linkTarget === "#" + currentSection
-            ) {
-
-                link.classList.add("active");
-
-            }
-
-        });
-
-    }
-
-    window.addEventListener(
-        "scroll",
-        updateActiveNavigation
-    );
-
-    updateActiveNavigation();
-
-
-    /* =====================================================
-       BACK TO TOP BUTTON
-    ===================================================== */
-
-    const topBtn =
-        document.getElementById("topBtn");
-
-    if (topBtn) {
-
-        window.addEventListener(
-            "scroll",
-            function () {
-
-                if (window.scrollY > 500) {
-
-                    topBtn.style.display = "flex";
-
-                } else {
-
-                    topBtn.style.display = "none";
-
-                }
-
-            }
-        );
-
-
-        topBtn.addEventListener(
-            "click",
-            function () {
-
-                window.scrollTo({
-
-                    top: 0,
-
-                    behavior: "smooth"
-
-                });
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       SCROLL REVEAL ANIMATION
-    ===================================================== */
-
-    const revealElements =
-        document.querySelectorAll(
-            ".about-image, " +
-            ".unique-image, " +
-            ".experience-card, " +
-            ".destination-card, " +
-            ".gallery-grid img, " +
-            ".review, " +
-            ".feature"
-        );
-
-
-    const revealObserver =
-        new IntersectionObserver(
-
-            function (entries) {
-
-                entries.forEach(
-                    function (entry) {
-
-                        if (
-                            entry.isIntersecting
-                        ) {
-
-                            entry.target.classList.add(
-                                "show"
-                            );
-
-                            revealObserver.unobserve(
-                                entry.target
-                            );
-
-                        }
-
-                    }
-                );
-
-            },
-
-            {
-                threshold: 0.15
-            }
-
-        );
-
-
-    revealElements.forEach(
-        function (element) {
-
-            element.classList.add(
-                "reveal"
-            );
-
-            revealObserver.observe(
-                element
-            );
-
-        }
-    );
-
-
-    /* =====================================================
-       HERO PARALLAX EFFECT
-    ===================================================== */
-
-    const hero =
-        document.querySelector(".hero");
-
-
-    if (hero) {
-
-        window.addEventListener(
-            "scroll",
-            function () {
-
-                const scrollPosition =
-                    window.scrollY;
-
-                if (
-                    scrollPosition < window.innerHeight
-                ) {
-
-                    hero.style.backgroundPosition =
-                        "center " +
-                        (scrollPosition * 0.35) +
-                        "px";
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       QUOTE FORM
-    ===================================================== */
-
-    const quoteForm =
-        document.querySelector(".quote-form");
-
-
-    if (quoteForm) {
-
-        quoteForm.addEventListener(
-            "submit",
-            function (event) {
-
-                event.preventDefault();
-
-
-                const destination =
-                    document.getElementById(
-                        "destination"
-                    )?.value || "";
-
-
-                const travelDate =
-                    document.getElementById(
-                        "travel-date"
-                    )?.value || "";
-
-
-                const travellers =
-                    document.getElementById(
-                        "travellers"
-                    )?.value || "";
-
-
-                const budget =
-                    document.getElementById(
-                        "budget"
-                    )?.value || "";
-
-
-                const accommodation =
-                    document.getElementById(
-                        "accommodation"
-                    )?.value || "";
-
-
-                const message =
-                    document.getElementById(
-                        "quote-message"
-                    )?.value || "";
-
-
-                const whatsappMessage =
-
-                    "Hello Leisure Fan Tours and Safaris.%0A%0A" +
-
-                    "I would like to request a free safari quote.%0A%0A" +
-
-                    "Destination: " +
-                    encodeURIComponent(destination) +
-
-                    "%0ATravel Date: " +
-                    encodeURIComponent(travelDate) +
-
-                    "%0ANumber of Travellers: " +
-                    encodeURIComponent(travellers) +
-
-                    "%0ABudget: " +
-                    encodeURIComponent(budget) +
-
-                    "%0AAccommodation: " +
-                    encodeURIComponent(accommodation) +
-
-                    "%0AAdditional Information: " +
-                    encodeURIComponent(message);
-
-
-                const whatsappURL =
-                    "https://wa.me/254740677858?text=" +
-                    whatsappMessage;
-
-
-                window.open(
-                    whatsappURL,
-                    "_blank"
-                );
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       IMAGE LAZY LOADING
-    ===================================================== */
-
-    const images =
-        document.querySelectorAll(
-            "img"
-        );
-
-
-    images.forEach(
-        function (image) {
-
-            image.setAttribute(
-                "loading",
-                "lazy"
-            );
-
-        }
-    );
-
-
-    /* =====================================================
-       IMAGE ERROR DETECTION
-    ===================================================== */
-
-    images.forEach(
-        function (image) {
-
-            image.addEventListener(
-                "error",
-                function () {
-
-                    console.warn(
-                        "Image not found: " +
-                        image.src
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-    /* =====================================================
-       YEAR AUTOMATICALLY UPDATES
-    ===================================================== */
-
-    const yearElement =
-        document.getElementById(
-            "currentYear"
-        );
-
-
-    if (yearElement) {
-
-        yearElement.textContent =
-            new Date().getFullYear();
-
-    }
-
-
-    /* =====================================================
-       WELCOME MESSAGE
-    ===================================================== */
-
-    console.log(
-        "Leisure Fan Tours and Safaris website loaded successfully."
-    );
-
-});
+}
